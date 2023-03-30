@@ -1,0 +1,3 @@
+[submodule "Scrapers"]
+	path = Scrapers
+	url = https://github.com/AequaTech/Scrapers.git
