@@ -1,0 +1,16 @@
+language: ['it'] #['it', 'en']
+
+data:
+  sentences: 
+  # ["La coda che c'è ogni volta per entrare non è di certo un caso.", "La sua specialità è un'idea geniale e squisita dal prezzo decisamente modesto.", "la mamma è bella"]
+  input_file: "./dati/gdelt/solo 1-4 2022.tsv"
+  output_file: "./dati/output-prova.csv"
+  source: ['gdelt'] #['duckduckgo', 'twitter', 'gdelt'] --> link/notizia/socialmedia
+  
+model:
+  bert_model: dbmdz/bert-base-italian-cased
+
+esperimenti:
+  prompt: Il commento "{}" parla di <mask>?
+  labels: ['yes', 'no']
+  aspects: ['cibo', 'delfino']
