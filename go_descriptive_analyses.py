@@ -1,8 +1,8 @@
 import sys
 sys.path.append('./aequa-tech_packages/') 
-from analysis.src import affective_analyses
+from analysis import affective_analyses
 from dataset import preprocess_dataset
-from text.src import preprocess
+from text import preprocess
 
 from nltk.tokenize import sent_tokenize,RegexpTokenizer
 import yaml
