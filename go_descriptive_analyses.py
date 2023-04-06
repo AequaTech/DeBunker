@@ -21,8 +21,8 @@ def descriptive_analyses(sents):
             d = dict()
             d['date'] = sent['date']
             d['doc_id'] = sent['doc_id']
-            d['sent_id'] = sent['id']
             d['text'] = sent['text']
+            d['sent_id'] = sent['id']
             d['sent'] = sent['sent']
             lemmatized_sent = preprocess.preprocess_sent(sent)['lemmatized']
             if not d['sent']:
