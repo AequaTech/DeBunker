@@ -22,28 +22,30 @@ def descriptive_analyses(sents):
             d['date'] = sent['date']
             d['doc_id'] = sent['doc_id']
             d['sent_id'] = sent['id']
-            d['sent'] = sent['text']
-            lemmatized_txt = preprocess.preprocess_sent(sent)['lemmatized']
-            # print('-->', lemmatized_txt)
+            d['text'] = sent['text']
+            d['sent'] = sent['sent']
+            lemmatized_sent = preprocess.preprocess_sent(sent)['lemmatized']
             if not d['sent']:
                 continue
             
             # print('sentiment')
-            d['positive'] = sentiment_analysis.sentiment_by_sent(lemmatized_txt)['positive']
-            d['negative'] = sentiment_analysis.sentiment_by_sent(lemmatized_txt)['negative']
+            d['positive'] = sentiment_analysis.sentiment_by_sent(lemmatized_sent)['positive']
+            d['negative'] = sentiment_analysis.sentiment_by_sent(lemmatized_sent)['negative']
             
+            # print('emotions')
+            d_emo = emotion_analysis.emotions_by_sent(lemmatized_sent)
+            for k, v in d_emo.items():
+                    d[k] = v
+
+            # print('hs, sarc')
             hs, sarc, logit1, logit2 = inference_hs_sarc.prediction(sent['text'])
             d['hs'] = hs
             d['sarcasm'] = sarc
-            
-            # print('emotions')
-            d_emo = emotion_analysis.emotions_by_sent(lemmatized_txt)
-            for k, v in d_emo.items():
-                    d[k] = v
+            # print(hs, sarc)
                                 
             list_dicts.append(d)
             
-        except Exception as e: print('<ERROR--->', e)
+        except Exception as e: print('<ERROR--->',sent['doc_id'], e)
 
     df = pd.DataFrame.from_records(list_dicts)
 
@@ -77,7 +79,7 @@ else:
 
 sents=[]
 for idx, txt, date in zip(ids, texts, dates):
-    sents.extend([{'date': date, 'doc_id': idx, 'text':' '.join(RegexpTokenizer(r'\w+').tokenize(x)), 'id':i} for i,x in enumerate(sent_tokenize(txt))])
+    sents.extend([{'date': date, 'doc_id': idx, 'text':txt, 'sent':' '.join(RegexpTokenizer(r'\w+').tokenize(x)), 'id':i} for i,x in enumerate(sent_tokenize(txt))])
 print('length data: ', len(sents))
 
 df_output = descriptive_analyses(sents)
