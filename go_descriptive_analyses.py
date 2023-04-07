@@ -21,9 +21,9 @@ def descriptive_analyses(sents):
             d = dict()
             d['date'] = sent['date']
             d['doc_id'] = sent['doc_id']
-            d['text'] = sent['text']
+            d['doc'] = sent['doc']
             d['sent_id'] = sent['id']
-            d['sent'] = sent['sent']
+            d['sent'] = sent['text']
             lemmatized_sent = preprocess.preprocess_sent(sent)['lemmatized']
             if not d['sent']:
                 continue
@@ -38,7 +38,7 @@ def descriptive_analyses(sents):
                     d[k] = v
 
             # print('hs, sarc')
-            hs, sarc, logit1, logit2 = inference_hs_sarc.prediction(sent['text'])
+            hs, sarc, logit1, logit2 = inference_hs_sarc.prediction(sent['doc'])
             d['hs'] = hs
             d['sarcasm'] = sarc
             # print(hs, sarc)
@@ -79,7 +79,7 @@ else:
 
 sents=[]
 for idx, txt, date in zip(ids, texts, dates):
-    sents.extend([{'date': date, 'doc_id': idx, 'text':txt, 'sent':' '.join(RegexpTokenizer(r'\w+').tokenize(x)), 'id':i} for i,x in enumerate(sent_tokenize(txt))])
+    sents.extend([{'date': date, 'doc_id': idx, 'doc':txt, 'text':' '.join(RegexpTokenizer(r'\w+').tokenize(x)), 'id':i} for i,x in enumerate(sent_tokenize(txt))])
 print('length data: ', len(sents))
 
 df_output = descriptive_analyses(sents)
