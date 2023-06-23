@@ -176,5 +176,5 @@ class WebScraper:
 if __name__ == "__main__":
     webScraper=WebScraper()
 
-    result=webScraper.scrape('https://www.ilfattoquotidiano.it/2023/06/17')
+    result=webScraper.scrape('https://www.pianetablunews.it/2023/04/28/si-rifiuta-di-andare-in-una-casa-di-riposo-senza-i-suoi-gatti-e-la-struttura-inaugura-un-piccolo-rifugio-per-accoglierli/')
     print(result)
