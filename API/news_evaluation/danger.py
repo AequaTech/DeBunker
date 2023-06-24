@@ -41,7 +41,7 @@ def main():
     s = 'I hate immigrants!'
     res = model.stereotype_detection(title=s) #,req_id=req)si occupa fastapi del caching
     #print(torch.argmax(res['logits']).item())
-    return torch.argmax(res['logits']).item()
+    return torch.argmax(res['logits'].detach()).item()
 
 if __name__=='__main__':
 
