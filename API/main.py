@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 from database import engine, SessionLocal,Base,Urls
 from sqlalchemy.orm import Session
 from datetime import datetime
-import torch
 from news_evaluation.danger import Danger
 
 danger = Danger('distilbert-base-uncased', 2)

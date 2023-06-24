@@ -32,7 +32,7 @@ class Danger():
 
         result = model(input_ids=feat,attention_mask=attention)
 
-        return result
+        return torch.argmax(result['logits'].detach()).item()
 
 
 def main():

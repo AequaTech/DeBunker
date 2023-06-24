@@ -18,4 +18,4 @@ request_id=json.loads(page.text)['request_id']
 
 page=requests.get('http://localhost:2000/api/v1/danger/'+request_id)
 
-print(page)
+print(json.loads(page.text)['stereotype'])
