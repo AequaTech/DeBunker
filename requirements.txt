@@ -1,0 +1,7 @@
+sqlalchemy
+fastapi
+beautifulsoup4
+requests
+numpy
+pydantic
+htmldate
