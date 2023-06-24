@@ -7,6 +7,11 @@ from pydantic import BaseModel, Field
 from database import engine, SessionLocal,Base,Urls
 from sqlalchemy.orm import Session
 from datetime import datetime
+import torch
+from news_evaluation.danger import Danger
+
+danger = Danger('distilbert-base-uncased', 2)
+
 
 app = FastAPI()
 
@@ -47,8 +52,6 @@ async def root():
     return {"message": "Prime numbers between"+str(lower)+"and"+str(upper)+"are: "+numbers}
 
 
-
-
 @app.post("/api/v1/scrape")
 async def retrieveUrl(url : str, db: Session = Depends(get_db)):
     hash_id = hashlib.md5(url.encode('utf-8')).hexdigest()
@@ -69,13 +72,28 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             db.commit()
             jsonResult['request_id'] = hash_id
 
-        return json.dumps(jsonResult)
+        return jsonResult
 
     else:
 
-        return json.dumps({'request_id':url_object.request_id,
+        return {'request_id':url_object.request_id,
                            'status_code':200,
                            'title':url_object.title,
                            'content': url_object.content,
-                           'date': datetime.strftime(url_object.date, '%Y-%M-%d')})
+                           'date': datetime.strftime(url_object.date, '%Y-%M-%d')}
 
+
+@app.get("/api/v1/danger/{request_id}")
+async def getDanger(request_id : str, db: Session = Depends(get_db)):
+    url_object=db.query(Urls).filter(Urls.request_id == request_id).first()
+    if url_object is not None:
+        res = danger.stereotype_detection(title=url_object.title)
+
+
+        return { 'status': 200, 'stereotype': res}
+
+    else:
+
+        return {
+                           'status_code':400,
+                           'message':'request_id not available. Recover the url content by /api/v1/scrape first.'}

@@ -1,3 +1,5 @@
+import json
+
 import requests
 from datetime import datetime
 import numpy as np
@@ -9,4 +11,11 @@ page=requests.post('http://localhost:2000/api/v1/scrape',params={'url': 'https:/
 
 
 print(page.status_code)
-print(page.text)
+print(type(page.text))
+jsonResponse=json.loads(page.text)
+print(type(jsonResponse))
+request_id=json.loads(page.text)['request_id']
+
+page=requests.get('http://localhost:2000/api/v1/danger/'+request_id)
+
+print(page)

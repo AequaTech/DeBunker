@@ -5,3 +5,7 @@ requests
 numpy
 pydantic
 htmldate
+transformers
+torch
+typing
+string
