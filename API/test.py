@@ -17,5 +17,5 @@ print(type(jsonResponse))
 request_id=json.loads(page.text)['request_id']
 
 page=requests.get('http://localhost:2000/api/v1/danger/'+request_id)
-
-print(json.loads(page.text)['stereotype'])
+print(page.text)
+print(json.loads(page.text))

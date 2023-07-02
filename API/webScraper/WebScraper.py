@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from transformers import AutoTokenizer
 from requests import exceptions
+import torch
+import io
 
 
 class WebScraper:
@@ -235,7 +237,12 @@ class BertBasedTokenizer:
 
         feat = tokenized['input_ids']
         attention = tokenized['attention_mask']
-
+        buffer = io.BytesIO()
+        torch.save(feat, buffer)
+        feat = buffer.getvalue()
+        buffer = io.BytesIO()
+        torch.save(attention, buffer)
+        attention = buffer.getvalue()
         return feat,attention
 
 

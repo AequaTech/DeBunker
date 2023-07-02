@@ -1,5 +1,7 @@
 import json
 from random import randint
+
+from webScraper.WebScraper import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
 import hashlib
 from fastapi import FastAPI, Depends
@@ -10,7 +12,7 @@ from datetime import datetime
 from news_evaluation.danger import Danger
 
 danger = Danger('distilbert-base-uncased', 2)
-
+tokenizer_bert = BertBasedTokenizer('dbmdz/bert-base-italian-cased')
 
 app = FastAPI()
 
@@ -26,6 +28,10 @@ class Url(BaseModel):
     request_id: str = Field(min_Length=1)
     title:      str = Field(min_Length=1)
     content:    str = Field(min_Length=1)
+    feat_title:    object = Field(min_Length=1)
+    attention_title:    object = Field(min_Length=1)
+    feat_content:    object = Field(min_Length=1)
+    attention_content:    object = Field(min_Length=1)
     date:       str = Field(min_length=1)
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
@@ -64,8 +70,10 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
         if jsonResult['status_code']==200:
             url_model = Urls()
             url_model.title        = jsonResult['title']
-            url_model.content      = '    '#jsonResult['content']
+            url_model.content      = jsonResult['content']
             url_model.date         = datetime.strptime(jsonResult['date'], '%Y-%M-%d')
+            url_model.feat_title,  url_model.attention_title = tokenizer_bert.tokenize_text(url_model.title)
+            url_model.feat_content,  url_model.attention_content = tokenizer_bert.tokenize_text(url_model.content)
             url_model.request_id   = hash_id
             db.add(url_model)
             db.commit()
@@ -86,7 +94,8 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
 async def getDanger(request_id : str, db: Session = Depends(get_db)):
     url_object=db.query(Urls).filter(Urls.request_id == request_id).first()
     if url_object is not None:
-        res = danger.stereotype_detection(title=url_object.title)
+
+        res = danger.classification(url_object.feat_title,url_object.attention_title)
 
 
         return { 'status': 200, 'stereotype': res}

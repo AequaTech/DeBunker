@@ -4,9 +4,7 @@ import torch,sys
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 from safetensors.torch import load_model, load_file
-sys.path.insert(1,'../webScraper/')
-
-from WebScraper import BertBasedTokenizer
+import io
 
 class Danger():
 
@@ -29,35 +27,30 @@ class Danger():
         '''
 
     def classification(self,feat,attention):
+        """
+        @marco: classification di che? stereotipe?
+
+        BytesIO representation of feat and attention
+
+        """
 
         model = self.model
         cp = self.cp
         if cp is not None:
             model.load_state_dict(load_file(self.cp))
-        else:
-            model
+        #else:
+        #    model
 
         model.eval()
+        feat=torch.load(io.BytesIO(feat))
+        attention=torch.load(io.BytesIO(attention))
 
         result = model(input_ids=feat,attention_mask=attention)
-        # print(torch.argmax(result['logits'].detach()).item(), '\t', result)
 
         return torch.argmax(result['logits'].detach()).item()
 
 
-def main():
-    # model = Danger('distilbert-base-uncased',2)
-    model = Danger('dbmdz/bert-base-italian-cased', 2, task='flame')
-    req = 123
-    # s = 'I hate immigrants!'
-    s = 'i musulmani ammazzano tutti quelli che per il loro fumoso cervello sono " infedeli " . i nostri terroristi istituzionali ci obbligano ad accogliere e mantenere i nostri assassini'
-    tokenizer = BertBasedTokenizer('dbmdz/bert-base-italian-cased')
-    feat,attention = tokenizer.tokenize_text(s)
-    res = model.classification(feat,attention) #,req_id=req)si occupa fastapi del caching
-    #print(torch.argmax(res['logits']).item())
-    print(res)
-    return res
+
 
 if __name__=='__main__':
-
-    main()
+    ...

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, BLOB, LargeBinary
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date, Text
@@ -22,4 +22,8 @@ class Urls(Base):
     request_id = Column(Text, primary_key=True, index=True)
     title = Column(Text)
     content = Column(Text)
+    feat_title = Column(LargeBinary)
+    attention_title = Column(LargeBinary)
+    feat_content = Column(LargeBinary)
+    attention_content = Column(LargeBinary)
     date = Column(Date)
