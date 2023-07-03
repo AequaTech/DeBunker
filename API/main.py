@@ -95,10 +95,10 @@ async def getDanger(request_id : str, db: Session = Depends(get_db)):
     url_object=db.query(Urls).filter(Urls.request_id == request_id).first()
     if url_object is not None:
 
-        res = danger.classification(url_object.feat_title,url_object.attention_title)
+        res = danger.prediction(url_object)
 
 
-        return { 'status': 200, 'stereotype': res}
+        return { 'status': 200, 'result': res}
 
     else:
 
