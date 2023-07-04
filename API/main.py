@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from news_evaluation.danger import Danger
 
-danger = Danger('distilbert-base-uncased', 2)
+danger = Danger('dbmdz/bert-base-italian-cased', 2)
 tokenizer_bert = BertBasedTokenizer('dbmdz/bert-base-italian-cased')
 
 app = FastAPI()
