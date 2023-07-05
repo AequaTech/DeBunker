@@ -1,7 +1,7 @@
 import json
 from random import randint
 
-from webScraper.WebScraper import BertBasedTokenizer
+from PreProcessing.PreProcessing import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
 import hashlib
 from fastapi import FastAPI, Depends
