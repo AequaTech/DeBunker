@@ -1,11 +1,8 @@
-from transformers import AutoConfig, AutoModel, AutoTokenizer
-import torch.nn as nn
-import torch, sys
+from transformers import  AutoTokenizer
+import torch
 from transformers import AutoModelForSequenceClassification
-from safetensors.torch import load_model, load_file
+from safetensors.torch import  load_file
 import io
-import loralib
-import peft  # corretto
 from peft import LoraConfig, get_peft_model
 from peft import set_peft_model_state_dict
 
@@ -34,7 +31,7 @@ class Danger():
         lora_model = get_peft_model(self.model, config)
         return lora_model
 
-    def classification(self, url, task='flame'):  # usato per questa prova
+    def classification(self, url, task):  # usato per questa prova
         # def classification(self,feat,attention, task='flame'):
         """
 
@@ -46,7 +43,7 @@ class Danger():
         elif task == 'flame':
             cp = 'models/hs.safetensors'
         elif task == 'iro':
-            cp = 'models/iro.safetensors'
+            cp = 'models/irony.safetensors'
         else:
             cp = 'models/sarcasm.safetensors'
 
@@ -60,27 +57,17 @@ class Danger():
 
         model.eval()
 
-        # feat=torch.load(io.BytesIO(feat))
-        # attention=torch.load(io.BytesIO(attention))
-
-        # usato per questa prova
-        #tokenized = self.tokenizer.encode_plus(url., return_tensors='pt')
-
-        #feat = tokenized['input_ids']
-        #attention = tokenized['attention_mask']
-
         result = model(input_ids=torch.load(io.BytesIO(url.feat_title)), attention_mask=torch.load(io.BytesIO(url.attention_title)))
 
         return torch.argmax(result['logits'].detach()).item()
 
     def prediction(self, url):
-        # res = {
-        # 'stereotype': classification(url.feat_title, url.attention_title, task='stereo'),
-        # 'flame':classification(url.feat_title, url.attention_title, task='flame'),
-        # 'irony': classification(url.feat_title, url.attention_title, task='iro'),
-        # 'sarcasm': classification(url.feat_title, url.attention_title, task='sarc')
-        # }
-        res = self.classification(url, task='flame')
+        res = {
+         'stereotype': self.classification(url, task='stereo'),
+         'flame':      self.classification(url, task='flame'),
+         'irony':      self.classification(url, task='iro'),
+         'sarcasm':    self.classification(url, task='sarc')
+         }
         return res  # aggiunto
 
 
