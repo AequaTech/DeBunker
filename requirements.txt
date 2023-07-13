@@ -12,3 +12,4 @@ typing
 loralib
 emojis
 textstat
+whois

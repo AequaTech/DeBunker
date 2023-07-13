@@ -122,7 +122,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
         informal_style = sensationalism.informal_style(url_object)
         sentiment_affective = sensationalism.get_affective_analysis(url_object)
         readability = sensationalism.get_readability_scores(url_object)
-        colloquial= sensationalism.get_colloquial_style(url_object)
+        colloquial= sensationalism.get_clickbait_style(url_object)
 
         return { 'status': 200,
                  'message': 'the request was successful',
@@ -130,7 +130,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
                              'informal_style' :informal_style,
                              'sentiment_affective' :sentiment_affective,
                              'readability':readability,
-                             'colloquial': colloquial,
+                             'clickbait_style': colloquial,
 
                  }}
     else:

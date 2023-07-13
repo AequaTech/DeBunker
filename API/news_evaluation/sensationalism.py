@@ -28,9 +28,9 @@ class Sensationalism:
         check_emoji=self.__check_emoji(url)
 
 
-        return {  'overall': numpy.average([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
+        return {'overall': numpy.average([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
                 'ratio_upper_case': ratio_upper_case,
-                'ratio_repeated_letters': ratio_repeated_letters,
+                'ratio_vowel_repetition': ratio_repeated_letters,
                 'punct_count': punct_count,
                 'check_emoji': check_emoji,
         }
@@ -168,7 +168,7 @@ class Sensationalism:
     ############
     # colloquial style
     ############
-    def get_colloquial_style(self, url) -> Dict[str, Union[str, float]]:
+    def get_clickbait_style(self, url) -> Dict[str, Union[str, float]]:
 
 
         return {
@@ -180,3 +180,5 @@ class Sensationalism:
             'shortened_form_score': random(),
             'interrogative_score': random(),
         }
+
+
