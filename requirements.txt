@@ -11,4 +11,4 @@ transformers
 typing
 loralib
 emojis
-analysis
+textstat

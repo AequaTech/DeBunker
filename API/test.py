@@ -4,12 +4,6 @@ import requests
 from datetime import datetime
 import numpy as np
 
-sentiment_analysis = affective_analyses.Sentix()
-
-emotion_analysis = affective_analyses.Emotions_NRC('it')
-
-
-
 #date=datetime.strptime('2023-04-28', '%Y-%M-%d')
 #print(date)
 

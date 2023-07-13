@@ -2,7 +2,6 @@ import json
 from random import randint
 
 import numpy
-
 from news_evaluation.sensationalism import Sensationalism
 from PreProcessing.PreProcessing import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
@@ -13,6 +12,7 @@ from database import engine, SessionLocal,Base,Urls
 from sqlalchemy.orm import Session
 from datetime import datetime
 from news_evaluation.danger import Danger
+from aequaTech_packages.analysis import affective_analyses
 
 danger = Danger('dbmdz/bert-base-italian-cased', 2)
 sensationalism = Sensationalism()
@@ -120,10 +120,18 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
     if url_object is not None:
 
         informal_style = sensationalism.informal_style(url_object)
+        sentiment_affective = sensationalism.get_affective_analysis(url_object)
+        readability = sensationalism.get_readability_scores(url_object)
+        colloquial= sensationalism.get_colloquial_style(url_object)
 
         return { 'status': 200,
-                 'result': { 'overall': numpy.average([informal_style['overall']]),
-                             'informal_style' :informal_style
+                 'message': 'the request was successful',
+                 'result': { 'overall': numpy.average([informal_style['overall'], sentiment_affective['overall'],readability['overall'],colloquial['overall'] ]),
+                             'informal_style' :informal_style,
+                             'sentiment_affective' :sentiment_affective,
+                             'readability':readability,
+                             'colloquial': colloquial,
+
                  }}
     else:
 

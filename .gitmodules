@@ -1,3 +1,6 @@
 [submodule "Scrapers"]
 	path = Scrapers
 	url = https://github.com/AequaTech/Scrapers.git
+[submodule "API/aequaTech_packages"]
+	path = API/aequaTech_packages
+	url = https://github.com/AequaTech/aequaTech_packages.git
