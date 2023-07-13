@@ -27,3 +27,6 @@ class Urls(Base):
     feat_content = Column(LargeBinary)
     attention_content = Column(LargeBinary)
     date = Column(Date)
+    is_reported = Column(Integer,default=0)
+
+

@@ -56,12 +56,12 @@ class PreprocessingSpacy:
 class BertBasedTokenizer:
     def __init__(self,model):
         self.model = model
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
+
 
     def tokenize_text(self,text):
 
-        model = self.model
-        tokenizer = AutoTokenizer.from_pretrained(model)
-        tokenized = tokenizer.encode_plus(text,return_tensors='pt')
+        tokenized = self.tokenizer.encode_plus(text,return_tensors='pt')
 
         feat = tokenized['input_ids']
         attention = tokenized['attention_mask']

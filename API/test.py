@@ -4,6 +4,12 @@ import requests
 from datetime import datetime
 import numpy as np
 
+sentiment_analysis = affective_analyses.Sentix()
+
+emotion_analysis = affective_analyses.Emotions_NRC('it')
+
+
+
 #date=datetime.strptime('2023-04-28', '%Y-%M-%d')
 #print(date)
 
@@ -13,9 +19,18 @@ page=requests.post('http://localhost:2000/api/v1/scrape',params={'url': 'https:/
 print(page.status_code)
 print(type(page.text))
 jsonResponse=json.loads(page.text)
-print(type(jsonResponse))
-request_id=json.loads(page.text)['request_id']
+print(json.dumps(jsonResponse))
+request_id=json.loads(page.text)['result']['request_id']
+
+
+page=requests.get('http://localhost:2000/api/v1/report_url/'+request_id)
+print(page.text)
+
 
 page=requests.get('http://localhost:2000/api/v1/danger/'+request_id)
+print(page.text)
+print(json.loads(page.text))
+
+page=requests.get('http://localhost:2000/api/v1/sentiationalism/'+request_id)
 print(page.text)
 print(json.loads(page.text))

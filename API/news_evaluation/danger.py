@@ -10,15 +10,12 @@ import numpy as np
 class Danger():
     """Class that implements the danger dimension that consist in detecting stereotype, flame, irony, and sarcasm.
     @simona spieghi meglio cosa viene utilizzata per fare la prediction?
-
-
     """
     def __init__(self, model_name: str = None, num_classes: int = None):
         """
             input
                 model_name: str es. 'dbmdz/bert-base-italian-cased'
                 num_classes: int es. 2
-
         """
         self.model_name = model_name
 
@@ -29,9 +26,7 @@ class Danger():
 
     def __model_lora(self):
         """
-
             @simona scrivi qui una descrizione di questo metodo? Io non so che fa
-
         """
         config = LoraConfig(
             r=16,
@@ -48,13 +43,11 @@ class Danger():
 
     def __classification(self, url, task):
         """
-
             input
                 url: object of class Urls(Base):
                 task: str admitted values 'stereotype', 'flame', 'irony', and 'sarcasm'
             output:
                 float between 0 and 1, result of the prediction of the task
-
         """
         #carico i pesi per il task specifico
         cp = 'news_evaluation/models/'+task+'.safetensors'

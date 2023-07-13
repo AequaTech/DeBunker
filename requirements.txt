@@ -6,8 +6,9 @@ pydantic
 requests
 safetensors
 sqlalchemy
-string
 torch
 transformers
 typing
 loralib
+emojis
+analysis
