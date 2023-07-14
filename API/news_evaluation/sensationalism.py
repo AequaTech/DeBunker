@@ -152,16 +152,16 @@ class Sensationalism:
         if flesch_reading_ease > 1:
             flesch_reading_ease = 1
 
-        gunning_fog = textstat.gunning_fog(url.title)
+        #gunning_fog = textstat.gunning_fog(url.title)
         #17	College graduate
         #12	High school senior
         #6	Sixth grade
-        gunning_fog = (gunning_fog - 6) / (17 - 6)
+        #gunning_fog = (gunning_fog - 6) / (17 - 6)
 
         return {
-            'overall' : np.average([flesch_reading_ease,gunning_fog]),
+            'overall' : np.average([flesch_reading_ease]),#,gunning_fog]),
             'flesch_reading_ease' : flesch_reading_ease,
-            'gunning_fog' : gunning_fog,
+            #'gunning_fog' : gunning_fog,
 
         }
 

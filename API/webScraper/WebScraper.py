@@ -161,7 +161,7 @@ class WebScraper:
                         article_text += '\n' + ''.join(p.findAll(string=True))
 
                 date = find_date(text)
-                return json.dumps({'status_code':200,'title':title, 'content': article_text, 'date':date})
+                return json.dumps({'status_code':200, 'message':'the request was successful', 'result' : {'title':title, 'content': article_text, 'date':date} })
             else:
                 return json.dumps({'status_code':400, 'message':'the requested url is not available'})
 
