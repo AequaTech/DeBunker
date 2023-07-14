@@ -212,7 +212,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                             'degree_in': random.randint(1,100),
                             'degree_out': random.randint(1,100),
                             'neighborhood_list': [('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
-                            'balck_community': random.random(),
+                            'black_community': random.random(),
                             'white_community': random.random(),
                          },
 
