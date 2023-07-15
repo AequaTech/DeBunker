@@ -207,7 +207,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              'sources': ['domain3', 'domain4'],
                              'info': 'information about the sources from with we recover the whitelist'
                          },
-
+                         'in_blacklist': random.randint(0,1),
                          'neighborhood': {
                             'degree_in': random.randint(1,100),
                             'degree_out': random.randint(1,100),
