@@ -14,3 +14,8 @@ emojis
 textstat
 whois
 tldextract
+pandas
+spacy==3.6.1
+peft
+openpyxl
+https://github.com/explosion/spacy-models/releases/download/it_core_news_lg-3.6.0/it_core_news_lg-3.6.0-py3-none-any.whl

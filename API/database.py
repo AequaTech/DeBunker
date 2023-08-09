@@ -14,8 +14,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-
-
 class Urls(Base):
     __tablename__ = "urls"
 
@@ -27,6 +25,8 @@ class Urls(Base):
     attention_title = Column(LargeBinary)
     feat_content = Column(LargeBinary)
     attention_content = Column(LargeBinary)
+    linguistic_features_title = Column(LargeBinary)
+    linguistic_features_content = Column(LargeBinary)
     date = Column(Date)
     is_reported = Column(Integer,default=0)
 
@@ -54,3 +54,11 @@ class DomainsNetworkMetrics(Base):
     black_community = Column(Float,default=None)
     white_list= Column(Text,default=None)
     black_list= Column(Text,default=None)
+
+
+class Links(Base):
+    __tablename__ = "links"
+
+    source = Column(Text, primary_key=True, index=True)
+    target = Column(Text, primary_key=True, index=True)
+    weight = Column(Integer)

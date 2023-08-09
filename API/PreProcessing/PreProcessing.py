@@ -2,6 +2,8 @@ import re,spacy
 from transformers import AutoTokenizer
 import torch
 import io
+#from scispacy.abbreviation import AbbreviationDetector
+
 
 class PreprocessingSpacy:
 
@@ -12,46 +14,22 @@ class PreprocessingSpacy:
         """Load given model."""
         if language == "it":
             self.nlp=spacy.load(self.languages["it"])
-            self.stopwords=self.list_stopwords(path_stopwords)
         elif language == "en":
             self.nlp=spacy.load(self.languages["en"])
-            self.stopwords= self.nlp.Defaults.stop_words
         else:
             raise Exception("Language not supported")
 
+
+        #abbreviation_pipe = AbbreviationDetector(self.nlp)
+        #self.nlp.add_pipe(abbreviation_pipe)
         self.language = language
 
-    def list_stopwords(self, path):
-        with open(path, 'r', encoding='utf8') as f:
-            r=f.read()
-            sw=r.split('\n')
-        return sw
 
-    def cleaning(self, text):
-        string = text.lower()
-        string = re.sub(r"((http|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)", " ", string, flags=re.U)
-        # string = re.sub(r'[@#]', ' ', string, flags=re.U)
-        string = re.sub(r"([\.\,\!\?\;\:\-\_\|“”\"\'\\\/\%\&\$\£\€\@\#\[\]\)\(])", r" \1 ", string)
-        string = re.sub(r"([0-9]+(\.[0-9]+)?)",r" \1 ", string)
-        string = re.sub(r"[^a-zA-Z0-9àèéìùòç]",r" ", string)
-        string = re.sub(r"\s+",r" ", string)
-        return string.strip()
+    def get_linguistic_features_from_text(self,text):
+        return self.nlp(text).to_bytes()
 
-    def preprocess_sent(self,text):
-        output_dict = dict()
-
-        text_cleaned= self.cleaning(text)
-
-        tokenized = self.nlp(text_cleaned)
-        lemmatized = ' '.join([i.lemma_ for i in tokenized])
-        pos = ' '.join([i.label_ for i in tokenized])
-        tokenized = ' '.join([i.text for i in tokenized])
-
-        output_dict['lemmatized'] = lemmatized
-        output_dict['pos'] = pos
-        output_dict['tokenized'] = tokenized
-
-        return output_dict
+    def get_linguistic_features_from_bytes(self, bytes):
+        return self.nlp.from_bytes(bytes)
 
 class BertBasedTokenizer:
     def __init__(self,model):

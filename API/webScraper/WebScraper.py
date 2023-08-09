@@ -170,11 +170,6 @@ class WebScraper:
         except Exception:
             return json.dumps({'status_code':500,'message':'something goes wrong'})
 
-
-
-
-
-
 if __name__ == "__main__":
     webScraper=WebScraper()
 

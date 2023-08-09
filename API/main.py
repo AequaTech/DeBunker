@@ -4,12 +4,12 @@ import random
 import numpy
 from sqlalchemy.exc import IntegrityError
 
+from PreProcessing.PreProcessing import PreprocessingSpacy
 from news_evaluation.sensationalism import Sensationalism
 from PreProcessing.PreProcessing import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
 import hashlib
 from fastapi import FastAPI, Depends
-from pydantic import BaseModel, Field
 from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -32,18 +32,10 @@ def get_db():
         yield db
     finally:
         db.close()
-class Url(BaseModel):
-    request_id       :  str    = Field(min_Length=1)
-    title            :  str    = Field(min_Length=1)
-    content          :  str    = Field(min_Length=1)
-    feat_title       :  object = Field(min_Length=1)
-    attention_title  :  object = Field(min_Length=1)
-    feat_content     :  object = Field(min_Length=1)
-    attention_content:  object = Field(min_Length=1)
-    date             :  str    = Field(min_length=1)
+
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
-
+preprocessing_spacy=PreprocessingSpacy('it')
 
 @app.post("/api/v1/scrape")
 async def retrieveUrl(url : str, db: Session = Depends(get_db)):
@@ -63,6 +55,8 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             url_model.date         = datetime.strptime(jsonResult['result']['date'], '%Y-%M-%d')
             url_model.feat_title,    url_model.attention_title   = tokenizer_bert.tokenize_text(url_model.title)
             url_model.feat_content,  url_model.attention_content = tokenizer_bert.tokenize_text(url_model.content)
+            url_model.linguistic_features_title = preprocessing_spacy.get_linguistic_features_from_text(url_model.title)
+            url_model.linguistic_features_content = preprocessing_spacy.get_linguistic_features_from_text(url_model.content)
             url_model.request_id   = hash_id
             db.add(url_model)
             db.commit()
