@@ -3,7 +3,7 @@ from transformers import AutoTokenizer
 import torch
 import io
 #from scispacy.abbreviation import AbbreviationDetector
-
+from spacy.tokens import DocBin
 
 class PreprocessingSpacy:
 
@@ -26,10 +26,16 @@ class PreprocessingSpacy:
 
 
     def get_linguistic_features_from_text(self,text):
-        return self.nlp(text).to_bytes()
+        doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE"], store_user_data=True)
+        doc_bin.add(self.nlp(text))
+        bytes_data = doc_bin.to_bytes()
+        return bytes_data
 
-    def get_linguistic_features_from_bytes(self, bytes):
-        return self.nlp.from_bytes(bytes)
+    def get_linguistic_features_from_bytes(self, bytes_data):
+        nlp = spacy.blank("it_core_news_lg")
+        doc_bin = DocBin().from_bytes(bytes_data)
+        docs = list(doc_bin.get_docs(nlp.vocab))
+        return docs[0]
 
 class BertBasedTokenizer:
     def __init__(self,model):

@@ -25,8 +25,8 @@ class Urls(Base):
     attention_title = Column(LargeBinary)
     feat_content = Column(LargeBinary)
     attention_content = Column(LargeBinary)
-    linguistic_features_title = Column(LargeBinary)
-    linguistic_features_content = Column(LargeBinary)
+    #linguistic_features_title = Column(LargeBinary)
+    #linguistic_features_content = Column(LargeBinary)
     date = Column(Date)
     is_reported = Column(Integer,default=0)
 

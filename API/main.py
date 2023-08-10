@@ -55,8 +55,8 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             url_model.date         = datetime.strptime(jsonResult['result']['date'], '%Y-%M-%d')
             url_model.feat_title,    url_model.attention_title   = tokenizer_bert.tokenize_text(url_model.title)
             url_model.feat_content,  url_model.attention_content = tokenizer_bert.tokenize_text(url_model.content)
-            url_model.linguistic_features_title = preprocessing_spacy.get_linguistic_features_from_text(url_model.title)
-            url_model.linguistic_features_content = preprocessing_spacy.get_linguistic_features_from_text(url_model.content)
+            #url_model.linguistic_features_title = preprocessing_spacy.get_linguistic_features_from_text(url_model.title)
+            #url_model.linguistic_features_content = preprocessing_spacy.get_linguistic_features_from_text(url_model.content)
             url_model.request_id   = hash_id
             db.add(url_model)
             db.commit()

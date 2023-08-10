@@ -2,7 +2,7 @@ import spacy
 import sys
 from collections import Counter
 nlp = spacy.load("it_core_news_lg")
-doc = nlp("io sono andato 12 volte? Si rifiuta tre volte di andare in una casa di riposo senza i suoi gatti e la struttura inaugura un piccolo rifugio per accoglierli")
+doc = nlp("Si rifiuta tre volte di andare in una casa di riposo senza i suoi gatti e la struttura inaugura un piccolo rifugio per accoglierli")
 i=0
 j=sys.float_info.epsilon #avoid division by 0
 
