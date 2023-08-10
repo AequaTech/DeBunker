@@ -1,4 +1,5 @@
 .idea/*
 API/.DS_Store
 .DS_Store
-API/news_evaluation/__pycache__/danger.cpython-38.pyc
+API/news_evaluation/__pycache__/*
+API/__pycache__/*
