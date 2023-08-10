@@ -63,12 +63,12 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             jsonResult['result']['request_id'] = hash_id
 
             domains_whois_model = DomainsWhois()
-            domains_whois_model.domain=tldextract.extract(url).domain
+            domains_whois_model.domain=tldextract.extract(url).registered_domain
             db.add(domains_whois_model)
             db.commit()
 
             domains_network_metrics = DomainsNetworkMetrics()
-            domains_network_metrics.domain=tldextract.extract(url).domain
+            domains_network_metrics.domain=tldextract.extract(url).registered_domain
             db.add(domains_network_metrics)
             db.commit()
 
@@ -117,12 +117,12 @@ async def getReportDomain(url : str, db: Session = Depends(get_db)):
         try:
 
             domains_whois_model = DomainsWhois()
-            domains_whois_model.domain = tldextract.extract(url).domain
+            domains_whois_model.domain = tldextract.extract(url).registered_domain
             db.add(domains_whois_model)
             db.commit()
 
             domains_network_metrics = DomainsNetworkMetrics()
-            domains_network_metrics.domain = tldextract.extract(url).domain
+            domains_network_metrics.domain = tldextract.extract(url).registered_domain
             db.add(domains_network_metrics)
             db.commit()
 
@@ -145,7 +145,6 @@ async def getDanger(request_id : str, db: Session = Depends(get_db)):
     else:
 
         return {'status_code':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
-
 
 
 @app.get("/api/v1/sentiationalism/{request_id}")
@@ -174,48 +173,60 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
 
 @app.get("/api/v1/echo_effect/{request_id}")
 async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
+    url_object = db.query(Urls).filter(Urls.request_id == request_id).first()
+    domain = tldextract.extract(url_object.url).registered_domain
+
+
+    domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
+
 
     return { 'status': 200,
              'message': 'the request was successful (random values)',
-             'result': { 'overall': random.random(),
-                         'pagerank' : random.random(),
-                         'closeness' : random.random(),
-                         'betweenness' : random.random(),
-                         'hub' : random.random(),
-                         'authority' : random.random(),
+             'result': { 'overall': random.random(), #@urbinati, da decidere, considerare come stabilire che 1 è indice di 'pericolosità'. Authority alto invece dovrebbe essere indice di affidabilità, meglio fare l'inverso?
+                         'pagerank' : domains_network_metrics_object.pagerank,
+                         'closeness' : domains_network_metrics_object.closeness,
+                         'betweenness' : domains_network_metrics_object.betweenness,
+                         'hub' : domains_network_metrics_object.hub,
+                         'authority' : domains_network_metrics_object.authority,
              }}
+
+
 
 
 @app.get("/api/v1/reliability/{request_id}")
 async def getReliability(request_id : str, db: Session = Depends(get_db)):
+    url_object = db.query(Urls).filter(Urls.request_id == request_id).first()
+    domain = tldextract.extract(url_object.url).registered_domain
+
+    domains_whois_object = db.query(DomainsWhois).filter(DomainsWhois.domain == domain).first()
+
+
+    domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
+
+
 
     return { 'status': 200,
              'message': 'the request was successful (random values)',
              'result': {
-                         'overall': random.random(),
-                         'whitelist': {
-                                         'sources': ['domain1','domain2'],
-                                         'info': 'information about the sources from with we recover the whitelist'
-                                      },
-                         'blacklist': {
-                             'sources': ['domain3', 'domain4'],
-                             'info': 'information about the sources from with we recover the whitelist'
-                         },
-                         'in_blacklist': random.randint(0,1),
+                         'overall': random.random(), #@urbinati, da decidere. Se è in black list metterei 1, altrimenti, metterei
+                         # if (black_community-white_community < 0) 0 else black_community-white_community
+                         'whitelist': domains_network_metrics_object.white_list,
+                         'blacklist': domains_network_metrics_object.black_list,
+                         'in_blacklist': domains_network_metrics_object.is_blacklist,
                          'neighborhood': {
-                            'degree_in': random.randint(1,100),
-                            'degree_out': random.randint(1,100),
-                            'neighborhood_list': [('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
-                            'black_community': random.random(),
-                            'white_community': random.random(),
+                            'degree_in': domains_network_metrics_object.degree_in,
+                            'degree_out': domains_network_metrics_object.degree_out,
+                            'neighborhood_list': domains_network_metrics_object.neighborhood_list, #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
+                            'black_community': domains_network_metrics_object.black_community,
+                            'white_community': domains_network_metrics_object.white_community,
                          },
 
                          'solidity': {
-                               'overall': random.random(),
-                               'registrant_country': 'IT',
-                               'creation_date': '2005/01/01',
-                               'expiration_date': '2025/01/01',
-                               'last_updated': '2003/01/01'
+                               'overall': domains_whois_object.overall,
+                               'registrant_country': domains_whois_object.registrant_country,
+                               'creation_date': domains_whois_object.creation_date,
+                               'expiration_date': domains_whois_object.expiration_date,
+                               'last_updated': domains_whois_object.expiration_date
                          }
                     }
              }

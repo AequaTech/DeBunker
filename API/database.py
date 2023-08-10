@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine, BLOB, LargeBinary, Float
+from sqlalchemy import create_engine, BLOB, LargeBinary, Float, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Text
+from sqlalchemy import Column, Integer, String, Date, Text,TIMESTAMP
+from datetime import datetime
 
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
@@ -34,14 +35,18 @@ class Urls(Base):
 class DomainsWhois(Base):
     __tablename__ = "domains_whois"
     domain = Column(Text, primary_key=True, index=True)
-    registrant_country = Column(Date,default=None)
-    creation_date = Column(Date,default=None)
-    expiration_date = Column(Date,default=None)
-    last_updated = Column(Date,default=None)
+    overall = Column(Float,default=None)
+    registrant_country = Column(Text,default=None)
+    creation_date = Column(DateTime,default=None)
+    expiration_date = Column(DateTime,default=None)
+    last_updated = Column(DateTime,default=None)
+    timestamp = Column('timestamp', TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
+
 
 class DomainsNetworkMetrics(Base):
     __tablename__ = "domains_network_metrics"
     domain = Column(Text, primary_key=True, index=True)
+    overall=Column(Float,default=None)
     pagerank=Column(Float,default=None)
     closeness=Column(Float,default=None)
     betweenness=Column(Float,default=None)
@@ -54,11 +59,20 @@ class DomainsNetworkMetrics(Base):
     black_community = Column(Float,default=None)
     white_list= Column(Text,default=None)
     black_list= Column(Text,default=None)
+    is_blacklist=Column(Float,default=None)
+    timestamp = Column('timestamp', TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
 
+class List(Base):
+    __tablename__ = "list"
+
+    domain    = Column(Text, primary_key=True, index=True)
+    source    = Column(Text,default=None)
+    list_type = Column(Text,default=None) #white or black
 
 class Links(Base):
     __tablename__ = "links"
 
     source = Column(Text, primary_key=True, index=True)
     target = Column(Text, primary_key=True, index=True)
-    weight = Column(Integer)
+    weight = Column(Integer,default=0)
+    timestamp = Column('timestamp', TIMESTAMP(timezone=False), nullable=False, default=datetime.now())

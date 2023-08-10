@@ -7,6 +7,8 @@ import numpy
 from aequaTech_packages.analysis import affective_analyses
 import textstat
 from random import random
+import spacy
+import sys
 
 class Sensationalism:
 
@@ -14,8 +16,8 @@ class Sensationalism:
         self.sentiment_analysis = affective_analyses.Sentix()
 
         self.emotion_analysis = affective_analyses.Emotions_NRC('it')
-
         textstat.set_lang('it')
+        self.nlp = spacy.load("it_core_news_lg")
 
     ############
     # informal style
@@ -170,15 +172,77 @@ class Sensationalism:
     ############
     def get_clickbait_style(self, url) -> Dict[str, Union[str, float]]:
 
+        linguistic_fetures=self.nlp(url.title)
+        print(type(linguistic_fetures))
+        personals=0
+        personals_and_impersonals=sys.float_info.epsilon #avoid division by 0
 
+        adj=0
+        adj_intensified=sys.float_info.epsilon #avoid division by 0
+
+        modals=0
+        modals_and_not=sys.float_info.epsilon #avoid division by 0
+
+        numeral=0
+        numeral_and_not=sys.float_info.epsilon #avoid division by 0
+
+        senteces_interrogative=0
+        senteces=sys.float_info.epsilon #avoid division by 0
+
+        for sent in linguistic_fetures.sents:
+            senteces+=1
+            if '?' in sent.text:
+                senteces_interrogative+=1
+
+            for token in sent:
+                if 'Persons' in token.morph.to_dict():
+                    personals_and_impersonals += 1
+                    if token.morph.to_dict()['Person'] == '1' or token.morph.to_dict()['Person'] == '2':
+                        personals += 1
+
+                #intensifier_score
+                if token.pos_=='ADJ':
+                    adj+=1
+                    if 'Degree' in token.morph.to_dict(): #@cignarella, piccolissimo non ha degree, non viene contato come intesifier piccolissimo ADJ A amod adjective None Gender=Masc|Number=Sing {'Gender': 'Masc', 'Number': 'Sing'}
+                        adj_intensified += 1
+
+
+                #@cignarella, modal score. I modali esistono solo per adj e noun?
+                #cosa è indicativo della presenza di sensazionalismo? Molti modal o pochi?
+                if token.pos_=='ADJ' or token.pos_=='NOUN':
+                    modals_and_not+=1
+                    if 'mod' in token.dep_:
+                        modals += 1
+
+                #@cignarella, cosa è indicativo della presenza di sensazionalismo? molti numeri o pochi numeri?
+                if token.pos_ == 'NUM':
+                    numeral_and_not+=1
+                    if 'mod' in token.dep_:
+                        numeral+=1
+
+        personal_score=personals/personals_and_impersonals
+        intensifier_score=adj_intensified/adj
+        modal_score=modals/modals_and_not
+        numeral_score=modals/modals_and_not
+        interrogative_score=senteces_interrogative/senteces
+        shortened_form_score=random()
+        print({
+            'overall': numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score]),
+            'personal_score': personal_score,
+            'intensifier_score': intensifier_score,
+            'modal_scoree': modal_score,
+            'numeral_score': numeral_score,
+            'shortened_form_score': shortened_form_score, #@cignarella, come trovo le interrogative?
+            'interrogative_score': interrogative_score,
+        })
         return {
-            'overall': random(),
-            'personal_score': random(),
-            'intensifier_score': random(),
-            'modal_scoree': random(),
-            'numeral_score': random(),
-            'shortened_form_score': random(),
-            'interrogative_score': random(),
+            'overall': numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score]),
+            'personal_score': personal_score,
+            'intensifier_score': intensifier_score,
+            'modal_scoree': modal_score,
+            'numeral_score': numeral_score,
+            'shortened_form_score': shortened_form_score, #@cignarella, come trovo le interrogative?
+            'interrogative_score': interrogative_score,
         }
 
 
