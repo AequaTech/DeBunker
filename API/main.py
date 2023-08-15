@@ -179,16 +179,19 @@ async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
 
     domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
 
-
-    return { 'status': 200,
-             'message': 'the request was successful (random values)',
-             'result': { 'overall': random.random(), #@urbinati, da decidere, considerare come stabilire che 1 è indice di 'pericolosità'. Authority alto invece dovrebbe essere indice di affidabilità, meglio fare l'inverso?
-                         'pagerank' : domains_network_metrics_object.pagerank,
-                         'closeness' : domains_network_metrics_object.closeness,
-                         'betweenness' : domains_network_metrics_object.betweenness,
-                         'hub' : domains_network_metrics_object.hub,
-                         'authority' : domains_network_metrics_object.authority,
-             }}
+    if domains_network_metrics_object is None or domains_network_metrics_object.overall is None:
+        return {'status': 200,
+                'message': 'the request was successful, but there is currently no information about the domain but the request has been registered, try again in a day' }
+    else:
+        return { 'status': 200,
+                 'message': 'the request was successful',
+                 'result': { 'overall': domains_network_metrics_object.authority*domains_network_metrics_object.betweenness,
+                             'pagerank' : domains_network_metrics_object.pagerank,
+                             'closeness' : domains_network_metrics_object.closeness,
+                             'betweenness' : domains_network_metrics_object.betweenness,#[0,---]
+                             'hub' : domains_network_metrics_object.hub,
+                             'authority' : domains_network_metrics_object.authority, #[0,1]
+                 }}
 
 
 
@@ -204,29 +207,33 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
     domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
 
 
+    if domains_network_metrics_object is None or domains_network_metrics_object.overall is None:
+        return {'status': 200,
+                'message': 'the request was successful, but there is currently no information about the domain but the request has been registered, try again in a day' }
+    else:
+        return { 'status': 200,
+                 'message': 'the request was successful (random values)',
+                 'result': {
+                             'whitelist': domains_network_metrics_object.white_list,
+                             'blacklist': domains_network_metrics_object.black_list,
+                             'in_blacklist': domains_network_metrics_object.is_blacklist,
+                             'neighborhood': {
+                                 'overall': domains_network_metrics_object.white_community/(domains_network_metrics_object.white_community+domains_network_metrics_object.black_community),
+                                 # @urbinati, da decidere. Se è in black list metterei 0, altrimenti, metterei
+                                 # white_community/(white_community+black_community)
+                                'degree_in': domains_network_metrics_object.degree_in,
+                                'degree_out': domains_network_metrics_object.degree_out,
+                                'neighborhood_list': domains_network_metrics_object.neighborhood_list, #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
+                                'black_community': domains_network_metrics_object.black_community,
+                                'white_community': domains_network_metrics_object.white_community,
+                             },
 
-    return { 'status': 200,
-             'message': 'the request was successful (random values)',
-             'result': {
-                         'overall': random.random(), #@urbinati, da decidere. Se è in black list metterei 1, altrimenti, metterei
-                         # if (black_community-white_community < 0) 0 else black_community-white_community
-                         'whitelist': domains_network_metrics_object.white_list,
-                         'blacklist': domains_network_metrics_object.black_list,
-                         'in_blacklist': domains_network_metrics_object.is_blacklist,
-                         'neighborhood': {
-                            'degree_in': domains_network_metrics_object.degree_in,
-                            'degree_out': domains_network_metrics_object.degree_out,
-                            'neighborhood_list': domains_network_metrics_object.neighborhood_list, #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
-                            'black_community': domains_network_metrics_object.black_community,
-                            'white_community': domains_network_metrics_object.white_community,
-                         },
-
-                         'solidity': {
-                               'overall': domains_whois_object.overall,
-                               'registrant_country': domains_whois_object.registrant_country,
-                               'creation_date': domains_whois_object.creation_date,
-                               'expiration_date': domains_whois_object.expiration_date,
-                               'last_updated': domains_whois_object.expiration_date
-                         }
-                    }
-             }
+                             'solidity': {
+                                   'overall': domains_whois_object.overall,
+                                   'registrant_country': domains_whois_object.registrant_country,
+                                   'creation_date': domains_whois_object.creation_date,
+                                   'expiration_date': domains_whois_object.expiration_date,
+                                   'last_updated': domains_whois_object.expiration_date
+                             }
+                        }
+                 }

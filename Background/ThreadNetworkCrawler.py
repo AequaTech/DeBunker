@@ -1,6 +1,9 @@
 import sys
+
+from Background.WebCrawler import WebCrawler
+
 sys.path.append('../')
-from sqlalchemy import create_engine,or_
+from sqlalchemy import create_engine,or_,and_
 from sqlalchemy.orm import sessionmaker
 from API.database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
 import requests
@@ -28,15 +31,20 @@ class ThreadNetworkCrawler:
         domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(or_(DomainsNetworkMetrics.overall == None,DomainsNetworkMetrics.timestamp<ten_weeks_ago))
 
         for domain_to_retrieve in domains_to_retrieve:
-            links = db.query(Links).filter(
-                     or_(Links.source == domain_to_retrieve.domain, Links.timestamp > ten_weeks_ago)).count()
+            #remove eventually very old links
+            db.query(Links).filter(
+             and_(Links.source == domain_to_retrieve.domain, Links.timestamp < ten_weeks_ago)).delete()
 
-            if links==0: #remove eventually very old links
-                db.query(Links).filter(
-                 or_(Links.source == domain_to_retrieve.domain, Links.timestamp > ten_weeks_ago)).delete()
+            edges=WebCrawler.retrieveDomains('http://'+domain_to_retrieve.domain,domain_to_retrieve.domain) #protocollo per il primo parametro?
 
-                 #fare crawling
-
+            #insert edges in db
+            for edge in edges:
+                link_model = Links()
+                link_model.source=edge[0]
+                link_model.target=edge[1]
+                link_model.weight=edge[2]
+                db.add(link_model)
+                db.commit()
 
 if __name__ == "__main__":
 

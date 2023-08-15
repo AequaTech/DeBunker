@@ -3,3 +3,5 @@ API/.DS_Store
 .DS_Store
 API/news_evaluation/__pycache__/*
 API/__pycache__/*
+API/webScraper/__pycache__/WebScraper.cpython-38.pyc
+*.pyc
