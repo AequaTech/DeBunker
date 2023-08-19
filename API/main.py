@@ -44,14 +44,13 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
     if url_object is None:
         webScraper=WebScraper()
         result=webScraper.scrape(url)
-        print(result)
         jsonResult=json.loads(result)
 
-        if jsonResult['status_code'] == 200:
+        if jsonResult['status'] == 200:
             url_model = Urls()
             url_model.url          = url
             url_model.title        = jsonResult['result']['title']
-            url_model.content      = jsonResult['result']['content']
+            url_model.content  = jsonResult['result']['content'].replace('\n',' ')
             url_model.date         = datetime.strptime(jsonResult['result']['date'], '%Y-%M-%d')
             url_model.feat_title,    url_model.attention_title   = tokenizer_bert.tokenize_text(url_model.title)
             url_model.feat_content,  url_model.attention_content = tokenizer_bert.tokenize_text(url_model.content)
@@ -62,15 +61,18 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             db.commit()
             jsonResult['result']['request_id'] = hash_id
 
-            domains_whois_model = DomainsWhois()
-            domains_whois_model.domain=tldextract.extract(url).registered_domain
-            db.add(domains_whois_model)
-            db.commit()
-
-            domains_network_metrics = DomainsNetworkMetrics()
-            domains_network_metrics.domain=tldextract.extract(url).registered_domain
-            db.add(domains_network_metrics)
-            db.commit()
+            result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
+            if result is None:
+                domains_whois_model = DomainsWhois()
+                domains_whois_model.domain=tldextract.extract(url).registered_domain
+                db.add(domains_whois_model)
+                db.commit()
+            result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
+            if result is None:
+                domains_network_metrics = DomainsNetworkMetrics()
+                domains_network_metrics.domain=tldextract.extract(url).registered_domain
+                db.add(domains_network_metrics)
+                db.commit()
 
         return  jsonResult
 
@@ -81,7 +83,7 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
                 'message':'the request was successful',
                 'result': {
                         'request_id':url_object.request_id,
-                        'status_code':200,
+                        'status':200,
                         'title':url_object.title,
                         'content': url_object.content,
                         'date': datetime.strftime(url_object.date, '%Y-%M-%d'),
@@ -112,7 +114,7 @@ async def getReportDomain(url : str, db: Session = Depends(get_db)):
     result = webScraper.scrape(url)
     jsonResult = json.loads(result)
 
-    if jsonResult['status_code'] == 200:
+    if jsonResult['status'] == 200:
 
         try:
 
@@ -144,7 +146,7 @@ async def getDanger(request_id : str, db: Session = Depends(get_db)):
 
     else:
 
-        return {'status_code':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
+        return {'status':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
 
 
 @app.get("/api/v1/sentiationalism/{request_id}")
@@ -168,7 +170,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
                  }}
     else:
 
-        return {'status_code':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
+        return {'status':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
 
 
 @app.get("/api/v1/echo_effect/{request_id}")
@@ -179,7 +181,7 @@ async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
 
     domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
 
-    if domains_network_metrics_object is None or domains_network_metrics_object.overall is None:
+    if domains_network_metrics_object is None or domains_network_metrics_object.pagerank is None:
         return {'status': 200,
                 'message': 'the request was successful, but there is currently no information about the domain but the request has been registered, try again in a day' }
     else:
@@ -207,7 +209,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
     domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
 
 
-    if domains_network_metrics_object is None or domains_network_metrics_object.overall is None:
+    if domains_network_metrics_object is None or domains_network_metrics_object.pagerank is None:
         return {'status': 200,
                 'message': 'the request was successful, but there is currently no information about the domain but the request has been registered, try again in a day' }
     else:

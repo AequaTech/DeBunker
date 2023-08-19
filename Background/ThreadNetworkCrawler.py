@@ -31,6 +31,13 @@ class ThreadNetworkCrawler:
         domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(or_(DomainsNetworkMetrics.overall == None,DomainsNetworkMetrics.timestamp<ten_weeks_ago))
 
         for domain_to_retrieve in domains_to_retrieve:
+
+            existing_links = db.query(Links).filter(
+                and_(Links.source == domain_to_retrieve.domain, Links.timestamp > ten_weeks_ago)).count()
+            print(domain_to_retrieve.domain,'existing_links',existing_links)
+            if existing_links > 0:
+                continue
+
             #remove eventually very old links
             db.query(Links).filter(
              and_(Links.source == domain_to_retrieve.domain, Links.timestamp < ten_weeks_ago)).delete()

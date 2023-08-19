@@ -125,6 +125,21 @@ class WebScraper:
     def scrape(self,url):
 
         try:
+
+            if len(url.split('?url=')) > 1:
+                url = url.split('?url=')[1]
+            if len(url.split('?u=')) > 1:
+                url = url.split('?u=')[1]
+
+            resp = requests.request('HEAD', url,headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'})
+
+            if resp.status_code == 200:
+                if 'text/html' not in resp.headers['Content-Type']:
+                    return json.dumps({'status': 400, 'message': 'the API exclusively satisfies text/html Content-Types. The current Content-Type is '+resp.headers['Content-Type']})
+            else:
+                return json.dumps({'status': 400, 'message': 'the requested url is not available'})
+
             page = requests.get(url, headers={
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'})
             text = page.text
@@ -161,14 +176,14 @@ class WebScraper:
                         article_text += '\n' + ''.join(p.findAll(string=True))
 
                 date = find_date(text)
-                return json.dumps({'status_code':200, 'message':'the request was successful', 'result' : {'title':title, 'content': article_text, 'date':date} })
+                return json.dumps({'status':200, 'message':'the request was successful', 'result' : {'title':title, 'content': article_text, 'date':date} })
             else:
-                return json.dumps({'status_code':400, 'message':'the requested url is not available'})
+                return json.dumps({'status':400, 'message':'the requested url is not available'})
 
         except exceptions.RequestException:
-            return json.dumps({'status_code': 400, 'message': 'the requested url is not available'})
+            return json.dumps({'status': 400, 'message': 'the requested url is not available'})
         except Exception:
-            return json.dumps({'status_code':500,'message':'something goes wrong'})
+            return json.dumps({'status':500,'message':'something goes wrong'})
 
 if __name__ == "__main__":
     webScraper=WebScraper()

@@ -3,5 +3,9 @@ API/.DS_Store
 .DS_Store
 API/news_evaluation/__pycache__/*
 API/__pycache__/*
-API/webScraper/__pycache__/WebScraper.cpython-38.pyc
+API/webScraper/__pycache__/*
 *.pyc
+API/__pycache__/main.cpython-38.pyc
+API/news_evaluation/__pycache__/sensationalism.cpython-38.pyc
+API/PreProcessing/__pycache__/PreProcessing.cpython-38.pyc
+API/webScraper/__pycache__/WebScraper.cpython-38.pyc

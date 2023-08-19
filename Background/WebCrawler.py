@@ -30,7 +30,6 @@ class WebCrawler:
         print(a_page,a_domain)
         try:
             req = requests.get(a_page, timeout=10,headers=hdr)
-            print(req.status_code)
         except Exception as e:
             print(e)
             return [], []

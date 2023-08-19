@@ -120,7 +120,6 @@ class ThreadNetworkMetrics:
                 domains_network_metrics.white_community = 0
                 domains_network_metrics.black_community = 0
                 for n in communities[node['community']]:
-                    print('n',n)
                     if G.vs[n]['name'] in white_black:
                         if 'blacklist' in white_black[G.vs[n]['name']]['list-type']:
                             domains_network_metrics.black_community +=1
