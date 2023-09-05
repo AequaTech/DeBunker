@@ -10,7 +10,7 @@ import csv
 #print(date)
 
 #domain='130.192.212.85:9000'
-domain='localhost:2000'
+domain='127.0.0.1:2000'
 
 
 #text/html; charset=iso-8859-1
@@ -22,15 +22,13 @@ domain='localhost:2000'
 spamreader=csv.DictReader(open('test.csv'),delimiter=',',quotechar='"')
 i=0
 for row in spamreader:
-    i+=1
-    if i < 1990:
-        continue
+
     print(row['url'])
     page=requests.post('http://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
     print(page.status_code)
     print(page.text)
-    time.sleep(2)
+    #time.sleep(2)
     if page.status_code!=200:
         continue
 
@@ -40,7 +38,7 @@ for row in spamreader:
     print(json.dumps(jsonResponse))
     request_id=json.loads(page.text)['result']['request_id']
     #time.sleep(1)
-    continue
+    #continue
     #page=requests.get('http://'+domain+'/api/v1/report_url/'+request_id)
     #print(page.text)
 

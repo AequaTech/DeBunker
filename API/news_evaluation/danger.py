@@ -90,38 +90,7 @@ class Danger():
 
 
 if __name__ == '__main__':
-    from API.database import engine, SessionLocal, Base, Urls
-    from API.database import Urls
-    from pydantic import BaseModel, Field
-    class Url(BaseModel):
-        request_id: str = Field(min_Length=1)
-        title: str = Field(min_Length=1)
-        content: str = Field(min_Length=1)
-        feat_title: object = Field(min_Length=1)
-        attention_title: object = Field(min_Length=1)
-        feat_content: object = Field(min_Length=1)
-        attention_content: object = Field(min_Length=1)
-        date: str = Field(min_length=1)
 
-
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
 
     danger = Danger('dbmdz/bert-base-italian-cased', 2)
 
-    cp = 'news_evaluation/models/flame.safetensors'
-    full_state_dict = load_file(cp)
-    db = SessionLocal()
-    request_id='caf7450c4b1feae5373d41f1234a1a1c'
-    url_object = db.query(Urls).filter(Urls.request_id == request_id).first()
-
-    # adatta il modello generale con i pesi del task specifico
-    set_peft_model_state_dict(danger.lora_model, full_state_dict)
-    danger.lora_model.eval()
-    # carica il tensore a partire  dalla sua rappresentazione binaria contenuta nel database
-    feat = torch.load(io.BytesIO(url_object.feat_title))
-    attention = torch.load(io.BytesIO(url_object.attention_title))
-    result = danger.lora_model(input_ids=feat, attention_mask=attention)
-    sigmoid = torch.nn.Sigmoid()
-    print(sigmoid(result['logits'].detach()))
-    print(torch.max(sigmoid(result['logits'].detach())))
-    print(torch.argmax(result['logits'].detach()).item())

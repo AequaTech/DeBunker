@@ -59,7 +59,7 @@ class Sensationalism:
         n_upper_words = len(re.findall(up_pattern,title))
         n_words = len(re.findall(all_w_pattern,title))
 
-        ratio = n_upper_words/n_words
+        ratio = n_upper_words/n_words if n_words > 0 else 0
 
         desc_eng = "There is at least one upper case word in the title" if ratio >0 else "There are no upper case words in the title"
 
@@ -86,7 +86,7 @@ class Sensationalism:
         n_upper_words = len(re.findall(up_pattern,title))
         n_words = len(re.findall(all_w_pattern,title))
 
-        ratio = n_upper_words/n_words
+        ratio = n_upper_words/n_words if n_words>0 else 0
 
         desc_eng = "There is at least one word with a repeated letter e.g. svegliaaa!" if ratio >0 else "There are no upper case words in the title"
 
@@ -271,3 +271,5 @@ class Sensationalism:
         }
 
 
+if __name__ == '__main__':
+    sensationalism = Sensationalism()
