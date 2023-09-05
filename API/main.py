@@ -220,7 +220,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              'blacklist': domains_network_metrics_object.black_list,
                              'in_blacklist': domains_network_metrics_object.is_blacklist,
                              'neighborhood': {
-                                 'overall': domains_network_metrics_object.white_community/(domains_network_metrics_object.white_community+domains_network_metrics_object.black_community),
+                                 'overall': domains_network_metrics_object.white_community/(domains_network_metrics_object.white_community+domains_network_metrics_object.black_community) if (domains_network_metrics_object.white_community+domains_network_metrics_object.black_community)>0 else 0,
                                  # @urbinati, da decidere. Se è in black list metterei 0, altrimenti, metterei
                                  # white_community/(white_community+black_community)
                                 'degree_in': domains_network_metrics_object.degree_in,
