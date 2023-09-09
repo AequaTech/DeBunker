@@ -44,21 +44,16 @@ preprocessing_spacy=PreprocessingSpacy('it')
 
 
 
-
 @app.on_event("startup")
-@repeat_every(seconds=60 * 60)  # 1 hour
-def NetworkWhoIs():
-    ThreadWhoIs().retrieveDomains()
-
-@app.on_event("startup")
-@repeat_every(seconds=60 * 60)  # 1 hour
-def NetworkMetrics():
-    ThreadNetworkMetrics().retrieveDomains()
-
-@app.on_event("startup")
-@repeat_every(seconds=60 * 60 * 24)  # 1 day
+@repeat_every(seconds=60 * 60 * 3)  # 3 hours
 def NetworkCrawler():
     ThreadNetworkCrawler().retrieveDomains()
+
+    ThreadWhoIs().retrieveDomains()
+
+    ThreadNetworkMetrics().retrieveDomains()
+
+
 
 @app.post("/api/v1/scrape")
 async def retrieveUrl(url : str, db: Session = Depends(get_db)):
