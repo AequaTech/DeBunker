@@ -3,8 +3,12 @@ WORKDIR /app
 ADD . /app
 
 RUN pip install -r requirements.txt
+
 WORKDIR /app/API
 
-RUN python news_evaluation/danger.py
+RUN python initialization4docker.py
 
-CMD ["uvicorn", "--port", "2000","main:app"]
+
+
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "2000"]

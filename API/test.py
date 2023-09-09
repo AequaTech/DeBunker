@@ -10,7 +10,8 @@ import csv
 #print(date)
 
 #domain='130.192.212.85:9000'
-domain='127.0.0.1:2000'
+#domain='api.debunker-assistant.aequa-tech.com'
+domain='localhost:9000'
 
 
 #text/html; charset=iso-8859-1
