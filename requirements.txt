@@ -85,4 +85,5 @@ w3lib==2.1.2
 wasabi==1.1.2
 whois==0.9.27
 zope.interface==6.0
+fastapi-utils==0.2.1
 https://github.com/explosion/spacy-models/releases/download/it_core_news_lg-3.6.0/it_core_news_lg-3.6.0-py3-none-any.whl

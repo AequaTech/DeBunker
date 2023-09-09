@@ -1,8 +1,8 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker
-from API.database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
+from database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
 import datetime
 import igraph as ig
 import numpy as np

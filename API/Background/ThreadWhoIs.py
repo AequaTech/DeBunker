@@ -1,8 +1,8 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 from sqlalchemy import create_engine,or_
 from sqlalchemy.orm import sessionmaker
-from API.database import Links,Base,Urls,DomainsWhois
+from database import Links,Base,Urls,DomainsWhois
 import requests
 import datetime
 import whois

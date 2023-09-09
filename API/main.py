@@ -16,6 +16,11 @@ from datetime import datetime
 from news_evaluation.danger import Danger
 import tldextract
 
+from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
+from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
+from Background.ThreadWhoIs import ThreadWhoIs
+from fastapi_utils.tasks import repeat_every
+
 danger = Danger('dbmdz/bert-base-italian-cased', 2)
 sensationalism = Sensationalism()
 
@@ -36,6 +41,24 @@ def get_db():
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
 preprocessing_spacy=PreprocessingSpacy('it')
+
+
+
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)  # 1 hour
+def NetworkWhoIs():
+    ThreadWhoIs().retrieveDomains()
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)  # 1 hour
+def NetworkMetrics():
+    ThreadNetworkMetrics().retrieveDomains()
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60 * 24)  # 1 day
+def NetworkCrawler():
+    ThreadNetworkCrawler().retrieveDomains()
 
 @app.post("/api/v1/scrape")
 async def retrieveUrl(url : str, db: Session = Depends(get_db)):

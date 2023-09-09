@@ -2,14 +2,11 @@ import sys
 
 from Background.WebCrawler import WebCrawler
 
-sys.path.append('../')
+sys.path.append('../../')
 from sqlalchemy import create_engine,or_,and_
 from sqlalchemy.orm import sessionmaker
-from API.database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
-import requests
+from database import Links,Base, DomainsNetworkMetrics
 import datetime
-import whois
-import time
 
 
 class ThreadNetworkCrawler:

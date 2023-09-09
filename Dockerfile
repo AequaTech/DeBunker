@@ -1,4 +1,7 @@
-FROM python:3.9
+FROM ubuntu:22.04
+RUN apt-get update
+RUN apt-get install -y python3.9
+RUN apt-get install -y python3-pip
 WORKDIR /app
 ADD . /app
 
@@ -6,8 +9,7 @@ RUN pip install -r requirements.txt
 
 WORKDIR /app/API
 
-RUN python initialization4docker.py
-
+RUN python3 initialization4docker.py
 
 
 
