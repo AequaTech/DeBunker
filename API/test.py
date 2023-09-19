@@ -10,8 +10,8 @@ import csv
 #print(date)
 
 #domain='130.192.212.85:9000'
-#domain='api.debunker-assistant.aequa-tech.com'
-domain='localhost:9000'
+domain='api.debunker-assistant.aequa-tech.com'
+#domain='localhost:2000'
 
 
 #text/html; charset=iso-8859-1
@@ -22,9 +22,13 @@ domain='localhost:9000'
 #exit()
 spamreader=csv.DictReader(open('test.csv'),delimiter=',',quotechar='"')
 i=0
+d={}
 for row in spamreader:
-
     print(row['url'])
+
+    #if row['url'].split("/")[2] in d:
+    #    continue
+
     page=requests.post('http://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
     print(page.status_code)
@@ -36,6 +40,8 @@ for row in spamreader:
     jsonResponse=json.loads(page.text)
     if jsonResponse['status']!=200:
         continue
+
+    d[row['url'].split("/")[2]] = 0
     print(json.dumps(jsonResponse))
     request_id=json.loads(page.text)['result']['request_id']
     #time.sleep(1)
@@ -47,7 +53,7 @@ for row in spamreader:
     page=requests.get('http://'+domain+'/api/v1/danger/'+request_id)
     print(page.text)
     print(json.loads(page.text))
-
+    #continue
     page=requests.get('http://'+domain+'/api/v1/sentiationalism/'+request_id)
     print(page.text)
     print(json.loads(page.text))

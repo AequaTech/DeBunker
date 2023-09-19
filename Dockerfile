@@ -3,10 +3,10 @@ RUN apt-get update
 RUN apt-get install -y python3.9
 RUN apt-get install -y python3-pip
 WORKDIR /app
-ADD . /app
-
+ADD requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
-
+RUN python3 -m spacy download it_core_news_lg
+ADD . /app
 WORKDIR /app/API
 
 RUN python3 initialization4docker.py

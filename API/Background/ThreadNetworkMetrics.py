@@ -15,10 +15,11 @@ class ThreadNetworkMetrics:
     @staticmethod
     def retrieveDomains():
 
-        SQLALCHEMY_DATABASE_URL = "sqlite:///../API/debunker.db"
+        SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
 
         engine = create_engine(
-            SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+            SQLALCHEMY_DATABASE_URL,
+            #connect_args={"check_same_thread": False}
         )
 
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -39,7 +40,7 @@ class ThreadNetworkMetrics:
                 G.vs[n]['community']=index
 
         white_black={}
-        white_black_list_file=open('White and Black list.csv')
+        white_black_list_file=open('Background/White and Black list.csv')
         for line in csv.DictReader(white_black_list_file,delimiter=',',quotechar='"'):
             if line['domain'] not in white_black:
                 white_black[line['domain']]={ 'sources' : [],'list-type' : [] }
@@ -85,13 +86,13 @@ class ThreadNetworkMetrics:
             if domains_network_metrics is not None:
                 #domains_network_metrics.domain=node['name']
                 #db.add(domains_network_metrics)
-                domains_network_metrics.pagerank=pagerank_norm[node.index]
-                domains_network_metrics.betweenness=betweenness_norm[node.index]
-                domains_network_metrics.closeness=closeness_norm[node.index]
-                domains_network_metrics.authority=authority_score_norm[node.index]
-                domains_network_metrics.hub=hub_score_norm[node.index]
-                domains_network_metrics.degree_out=degrees_out[node.index]
-                domains_network_metrics.degree_in=degrees_in[node.index]
+                domains_network_metrics.pagerank=float(pagerank_norm[node.index])
+                domains_network_metrics.betweenness=float(betweenness_norm[node.index])
+                domains_network_metrics.closeness=float(closeness_norm[node.index])
+                domains_network_metrics.authority=float(authority_score_norm[node.index])
+                domains_network_metrics.hub=float(hub_score_norm[node.index])
+                domains_network_metrics.degree_out=float(degrees_out[node.index])
+                domains_network_metrics.degree_in=float(degrees_in[node.index])
 
                 weighted_neighbors = [[G.vs[neighbor]['name'],G.es[G.get_eid(node.index, neighbor,directed=True)]['weight']] for neighbor in G.neighbors(node['name'],mode='out')]
                 weighted_neighbors.sort(key=lambda tup: tup[1], reverse=True)

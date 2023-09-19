@@ -1,4 +1,7 @@
 import sys
+import os
+
+print(os.getcwd())
 
 from Background.WebCrawler import WebCrawler
 
@@ -8,14 +11,15 @@ from sqlalchemy.orm import sessionmaker
 from database import Links,Base, DomainsNetworkMetrics
 import datetime
 
-
 class ThreadNetworkCrawler:
     @staticmethod
     def retrieveDomains():
-        SQLALCHEMY_DATABASE_URL = "sqlite:///../API/debunker.db"
+        SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
+        SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@localhost:9000/debunker?"
 
         engine = create_engine(
-            SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+            SQLALCHEMY_DATABASE_URL,
+            #connect_args={"check_same_thread": False}
         )
 
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -47,7 +51,7 @@ class ThreadNetworkCrawler:
                 link_model.source=edge[0]
                 link_model.target=edge[1]
                 link_model.weight=edge[2]
-                db.add(link_model)
+                db.merge(link_model)
                 db.commit()
 
 if __name__ == "__main__":

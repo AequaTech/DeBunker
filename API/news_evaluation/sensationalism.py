@@ -252,7 +252,7 @@ class Sensationalism:
         interrogative_score=senteces_interrogative/senteces if senteces>0 else 0
         shortened_form_score=random()
         print({
-            'overall': numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score]),
+            'overall': float(numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
             'personal_score': personal_score,
             'intensifier_score': intensifier_score,
             'modal_scoree': modal_score,

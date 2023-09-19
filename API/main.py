@@ -1,5 +1,6 @@
 import json
 import random
+import time
 
 import numpy
 from sqlalchemy.exc import IntegrityError
@@ -19,7 +20,10 @@ import tldextract
 from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
 from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
 from Background.ThreadWhoIs import ThreadWhoIs
-from fastapi_utils.tasks import repeat_every
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+"""from fastapi_utils.tasks import repeat_every"""
 
 danger = Danger('dbmdz/bert-base-italian-cased', 2)
 sensationalism = Sensationalism()
@@ -39,19 +43,14 @@ def get_db():
         db.close()
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
+#SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
+#SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://debunker:1203u249@db:9001/debunker"
 preprocessing_spacy=PreprocessingSpacy('it')
 
 
 
-@app.on_event("startup")
-@repeat_every(seconds=60 * 60 * 3)  # 3 hours
-def NetworkCrawler():
-    ThreadNetworkCrawler().retrieveDomains()
 
-    ThreadWhoIs().retrieveDomains()
 
-    ThreadNetworkMetrics().retrieveDomains()
 
 
 
@@ -257,3 +256,21 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              }
                         }
                  }
+
+
+
+
+
+scheduler=BackgroundScheduler()
+def NetworkCrawler():
+    print("Starting background processes")
+    time.sleep(60)
+
+    ThreadNetworkCrawler().retrieveDomains()
+
+    ThreadWhoIs().retrieveDomains()
+
+    ThreadNetworkMetrics().retrieveDomains()
+
+scheduler.add_job(NetworkCrawler, 'interval', minutes=5)
+scheduler.start()

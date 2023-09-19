@@ -1,15 +1,18 @@
+import time
+
 from sqlalchemy import create_engine, BLOB, LargeBinary, Float, DateTime
-from sqlalchemy.dialects.mysql import LONGTEXT
+from sqlalchemy.dialects.mysql import LONGTEXT, LONGBLOB
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Date, Text,TIMESTAMP
 from datetime import datetime
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
+#SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
+SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL, #connect_args={"check_same_thread": False}
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -19,14 +22,14 @@ Base = declarative_base()
 class Urls(Base):
     __tablename__ = "urls"
 
-    request_id = Column(Text, primary_key=True, index=True)
+    request_id = Column(String(150), primary_key=True, index=True)
     url = Column(Text)
     title = Column(Text)
     content = Column(Text)
-    feat_title = Column(LargeBinary)
-    attention_title = Column(LargeBinary)
-    feat_content = Column(LargeBinary)
-    attention_content = Column(LargeBinary)
+    feat_title = Column(LONGBLOB)
+    attention_title = Column(LONGBLOB)
+    feat_content = Column(LONGBLOB)
+    attention_content = Column(LONGBLOB)
     #linguistic_features_title = Column(LargeBinary)
     #linguistic_features_content = Column(LargeBinary)
     date = Column(Date)
@@ -35,7 +38,7 @@ class Urls(Base):
 
 class DomainsWhois(Base):
     __tablename__ = "domains_whois"
-    domain = Column(Text, primary_key=True, index=True)
+    domain = Column(String(150), primary_key=True, index=True)
     overall = Column(Float,default=None)
     registrant_country = Column(Text,default=None)
     creation_date = Column(DateTime,default=None)
@@ -46,7 +49,7 @@ class DomainsWhois(Base):
 
 class DomainsNetworkMetrics(Base):
     __tablename__ = "domains_network_metrics"
-    domain = Column(Text, primary_key=True, index=True)
+    domain = Column(String(150), primary_key=True, index=True)
     overall=Column(Float,default=None)
     pagerank=Column(Float,default=None)
     closeness=Column(Float,default=None)
@@ -66,14 +69,14 @@ class DomainsNetworkMetrics(Base):
 class List(Base):
     __tablename__ = "list"
 
-    domain    = Column(Text, primary_key=True, index=True)
+    domain    = Column(String(150), primary_key=True, index=True)
     source    = Column(Text,default=None)
     list_type = Column(Text,default=None) #white or black
 
 class Links(Base):
     __tablename__ = "links"
 
-    source = Column(Text, primary_key=True, index=True)
-    target = Column(Text, primary_key=True, index=True)
+    source = Column(String(150), primary_key=True, index=True)
+    target = Column(String(150), primary_key=True, index=True)
     weight = Column(Integer,default=0)
     timestamp = Column('timestamp', TIMESTAMP(timezone=False), nullable=False, default=datetime.now())
