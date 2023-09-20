@@ -15,7 +15,7 @@ class ThreadNetworkCrawler:
     @staticmethod
     def retrieveDomains():
         SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
-        SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@localhost:9000/debunker?"
+        #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@localhost:9000/debunker?"
 
         engine = create_engine(
             SQLALCHEMY_DATABASE_URL,

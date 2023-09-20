@@ -7,32 +7,30 @@ services:
     environment:
       MARIADB_DATABASE: 'debunker'
       MARIADB_ROOT_PASSWORD: '309urje4'
-    ports:
-      # <Port exposed> : <MySQL Port running inside container>
-      - '3306:3306'
+    expose:
+      - '3306'
     volumes:
-      - '/Users/mirko/Documents/GitHub/volume:/var/lib/mysql'
-    #expose:
-      # Opens port 3306 on the container
-    #  - '3306'
-      # Where our data will be persisted
-    #volumes:
-    #  - /media/debunker/mysql:/var/lib/mysql
-# Names our volume
-#    volumes:
-#      my-db:
-#    networks:
-#      - default
+      - '/cold_storage/data/debunker:/var/lib/mysql'
+    networks:
+      static-network:
+        ipv4_address: 10.5.0.5
   debunker:
     #container_name: debunker
     build: '.'
     restart: always
     ports:
-      - '2000:2000'
+      - '9001:2000'
     depends_on:
       - db
-    #networks:
-    #  - default
-#networks:
-#  default:
-#    driver: bridge
+    networks:
+      static-network:
+        ipv4_address: 10.5.0.6
+    tty: true
+    stdin_open: true
+networks:
+  static-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
