@@ -14,7 +14,6 @@ class Sensationalism:
 
     def __init__(self) -> None:
         self.sentiment_analysis = affective_analyses.Sentix()
-
         self.emotion_analysis = affective_analyses.Emotions_NRC('it')
         textstat.set_lang('it')
         self.nlp = spacy.load("it_core_news_lg")
@@ -199,8 +198,9 @@ class Sensationalism:
 
         linguistic_fetures=self.nlp(url.title)
         print(type(linguistic_fetures))
+        count_token = 0
+
         personals=0
-        personals_and_impersonals=0 #avoid division by 0
 
         adj=0
         adj_intensified=0 #avoid division by 0
@@ -209,55 +209,66 @@ class Sensationalism:
         modals_and_not=0 #avoid division by 0
 
         numeral=0
-        numeral_and_not=0 #avoid division by 0
 
         senteces_interrogative=0
         senteces=0 #avoid division by 0
+        shortened_form=0
 
         for sent in linguistic_fetures.sents:
+
+            # interrogative_score
             senteces+=1
             if '?' in sent.text:
                 senteces_interrogative+=1
 
             for token in sent:
-                if 'Persons' in token.morph.to_dict():
-                    personals_and_impersonals += 1
-                    if token.morph.to_dict()['Person'] == '1' or token.morph.to_dict()['Person'] == '2':
-                        personals += 1
+                print(token.text,token.lemma_,token.pos_,token.morph,token.dep_)
+
+                count_token+=1
+
+                # personal score
+                personali_soggetto=['io', 'tu', 'egli', 'ella', 'noi', 'voi', 'essi', 'lui', 'lei', 'loro', 'esso', 'essa', 'esse']
+                personali_complemento=['me', 'mi', 'te', 'ti', 'lui', 'sé', 'ciò', 'lei', 'lo', 'gli', 'ne', 'si', 'la', 'le', 'noi', 'ci', 'voi', 'vi', 'essi', 'loro', 'esse', 'li', 'le']
+                pronomi_dimostrativi=['questo','codesto','quello','questa','codesta','quella','questi','codesti','quelli','queste','codeste','quelle','stesso','stessa','stessi','stesse',
+                                      'medesimo','medesima','medesime','medesimi','tale','tali','costui','costei','costoro','colui','colei','coloro','ciò']
+                if token.text.lower() in personali_soggetto+personali_complemento+pronomi_dimostrativi:
+                    personals += 1
 
                 #intensifier_score
                 if token.pos_=='ADJ':
                     adj+=1
-                    if 'Degree' in token.morph.to_dict(): #@cignarella, piccolissimo non ha degree, non viene contato come intesifier piccolissimo ADJ A amod adjective None Gender=Masc|Number=Sing {'Gender': 'Masc', 'Number': 'Sing'}
+                    if 'Degree' in token.morph.to_dict() and (token.morph.to_dict()['Degree']=='Sup' or token.morph.to_dict()['Degree']=='Abs' ):
                         adj_intensified += 1
 
 
-                #@cignarella, modal score. I modali esistono solo per adj e noun?
-                #cosa è indicativo della presenza di sensazionalismo? Molti modal o pochi?
-                if token.pos_=='ADJ' or token.pos_=='NOUN':
+                #modal_scoree
+                if token.pos_=='VERB':
                     modals_and_not+=1
-                    if 'mod' in token.dep_:
+                    if token.lemma_ in ['potere','volere','dovere']:
                         modals += 1
 
-                #@cignarella, cosa è indicativo della presenza di sensazionalismo? molti numeri o pochi numeri?
+                # numeral_score
                 if token.pos_ == 'NUM':
-                    numeral_and_not+=1
-                    if 'mod' in token.dep_:
-                        numeral+=1
+                    numeral+=1
 
-        personal_score= personals/personals_and_impersonals if personals_and_impersonals>0 else 0
+                # shortened_form_score
+                if token.text.lower() in ['xke', 'xké', 'tadb', 'tat', 'k', 'kk', 'tl;dr', 'thx', 'tvtb', 'tvukdb', 'xoxo', 'tbh', 'scnr', 'rly?', 'rofl', 'plz', 'omg', 'omfg', 'nsfw', 'n8', 'n1', 'noob', 'n00b', 'lol', 'irl', 'imho', 'imo', 'idk', 'Hth', 'Hf', 'gratz', 'gg', 'gl', 'gj', 'gn', 'g2g', 'gig', 'fyi', 'faq', 'f2f', 'eod', 'ez', 'dafuq', 'dafuq', 'wtf', 'cya', 'cbcr', 'btw', 'brb', 'bbl', 'bg', 'asap', 'afaik', 'aka', '2L8', '2g4u', 'ime', 'b4', 'rsvp', 'lmk', 'dob', 'eta', 'fomo', 'diy', 'fwiw', 'hmu', 'icymi', 'tbh', 'tbf']:
+                    shortened_form += 1
+
+
+        personal_score= personals/count_token if count_token>0 else 0
         intensifier_score=adj_intensified/adj if adj>0 else 0
         modal_score=modals/modals_and_not if modals_and_not>0 else 0
-        numeral_score=modals/numeral_and_not if numeral_and_not>0 else 0
+        numeral_score=modals/count_token if count_token>0 else 0
         interrogative_score=senteces_interrogative/senteces if senteces>0 else 0
-        shortened_form_score=random()
+        shortened_form_score=shortened_form/count_token if count_token>0 else 0
         print({
             'overall': float(numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
             'personal_score': personal_score,
             'intensifier_score': intensifier_score,
             'modal_scoree': modal_score,
             'numeral_score': numeral_score,
-            'shortened_form_score': shortened_form_score, #@cignarella, come trovo le interrogative?
+            'shortened_form_score': shortened_form_score,
             'interrogative_score': interrogative_score,
         })
         return {
@@ -273,3 +284,11 @@ class Sensationalism:
 
 if __name__ == '__main__':
     sensationalism = Sensationalism()
+
+
+
+    text='cmq '
+
+    print(sensationalism.get_clickbait_style(text))
+
+

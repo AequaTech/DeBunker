@@ -175,7 +175,7 @@ async def getDanger(request_id : str, db: Session = Depends(get_db)):
         return {'status':400,'message':'request_id not available. Recover the content of the url by /api/v1/scrape first.'}
 
 
-@app.get("/api/v1/sentiationalism/{request_id}")
+@app.get("/api/v1/sensationalism/{request_id}")
 async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
     url_object=db.query(Urls).filter(Urls.request_id == request_id).first()
     if url_object is not None:
