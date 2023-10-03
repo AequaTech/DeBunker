@@ -21,6 +21,7 @@ from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
 from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
 from Background.ThreadWhoIs import ThreadWhoIs
 from apscheduler.schedulers.background import BackgroundScheduler
+from fastapi.middleware.cors import CORSMiddleware
 
 
 """from fastapi_utils.tasks import repeat_every"""
@@ -32,7 +33,15 @@ sensationalism = Sensationalism()
 tokenizer_bert = BertBasedTokenizer('dbmdz/bert-base-italian-cased')
 
 app = FastAPI()
+origins = ["*"]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 Base.metadata.create_all(bind=engine)
 
 def get_db():
