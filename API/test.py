@@ -9,7 +9,7 @@ import csv
 #date=datetime.strptime('2023-04-28', '%Y-%M-%d')
 #print(date)
 
-#domain='130.192.212.85:9001'
+#domain='130.192.212.85:9000'
 domain='api.debunker-assistant.aequa-tech.com'
 #domain='localhost:9001'
 
@@ -26,8 +26,8 @@ d={}
 for row in spamreader:
     print(row['url'])
     #time.sleep(2)
-    if row['url'].split("/")[2] in d:
-        continue
+    #if row['url'].split("/")[2] in d:
+    #    continue
 
     page=requests.post('http://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
