@@ -285,7 +285,7 @@ def NetworkCrawler():
 
 
 
-tomorrow_start = datetime.combine(datetime.today(), time(0, 0)) + timedelta(1)
+tomorrow_start = datetime.combine(datetime.today(), datetime.time(0, 0)) + timedelta(1)
 
 scheduler.add_job(NetworkCrawler, 'interval', hours=24,max_instances=1,next_run_time=tomorrow_start)
 scheduler.start()
