@@ -13,9 +13,10 @@ import hashlib
 from fastapi import FastAPI, Depends
 from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics
 from sqlalchemy.orm import Session
-from datetime import datetime, time,timedelta
+from datetime import datetime,timedelta
 from news_evaluation.danger import Danger
 import tldextract
+import time
 
 from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
 from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
@@ -242,8 +243,8 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
         return { 'status': 200,
                  'message': 'the request was successful (random values)',
                  'result': {
-                             'whitelist': domains_network_metrics_object.white_list,
-                             'blacklist': domains_network_metrics_object.black_list,
+                             'whitelist': json.loads(domains_network_metrics_object.white_list),
+                             'blacklist': json.loads(domains_network_metrics_object.black_list),
                              'in_blacklist': domains_network_metrics_object.is_blacklist,
                              'neighborhood': {
                                  'overall': domains_network_metrics_object.white_community/(domains_network_metrics_object.white_community+domains_network_metrics_object.black_community) if (domains_network_metrics_object.white_community+domains_network_metrics_object.black_community)>0 else 0,
@@ -251,7 +252,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                                  # white_community/(white_community+black_community)
                                 'degree_in': domains_network_metrics_object.degree_in,
                                 'degree_out': domains_network_metrics_object.degree_out,
-                                'neighborhood_list': domains_network_metrics_object.neighborhood_list, #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
+                                'neighborhood_list': json.loads(domains_network_metrics_object.neighborhood_list), #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
                                 'black_community': domains_network_metrics_object.black_community,
                                 'white_community': domains_network_metrics_object.white_community,
                              },
