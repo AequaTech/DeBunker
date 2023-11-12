@@ -13,10 +13,9 @@ import hashlib
 from fastapi import FastAPI, Depends
 from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics
 from sqlalchemy.orm import Session
-from datetime import datetime,timedelta
+from datetime import datetime, time,timedelta
 from news_evaluation.danger import Danger
 import tldextract
-import time
 
 from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
 from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
@@ -274,7 +273,6 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
 scheduler=BackgroundScheduler()
 def NetworkCrawler():
     print("Starting background processes")
-    time.sleep(60)
 
     ThreadNetworkCrawler().retrieveDomains()
 
@@ -285,7 +283,7 @@ def NetworkCrawler():
 
 
 
-tomorrow_start = datetime.combine(datetime.today(), datetime.time(0, 0)) + timedelta(1)
+tomorrow_start = datetime.combine(datetime.today(), time(0, 0)) + timedelta(1)
 
 scheduler.add_job(NetworkCrawler, 'interval', hours=24,max_instances=1,next_run_time=tomorrow_start)
 scheduler.start()
