@@ -7,8 +7,8 @@ services:
     environment:
       MARIADB_DATABASE: 'debunker'
       MARIADB_ROOT_PASSWORD: '309urje4'
-    ports:
-      - '3306:3306'
+    #ports:
+    #  - '3306:3306'
     volumes:
       - '/cold_storage/data/debunker:/var/lib/mysql'
     networks:
