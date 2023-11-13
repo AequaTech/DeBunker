@@ -1,6 +1,7 @@
 import json
 import random
 import time
+from urllib.parse import urlparse
 
 import numpy
 from sqlalchemy.exc import IntegrityError
@@ -15,7 +16,7 @@ from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetwork
 from sqlalchemy.orm import Session
 from datetime import datetime, time,timedelta
 from news_evaluation.danger import Danger
-import tldextract
+#import tldextract
 
 from Background.ThreadNetworkCrawler import ThreadNetworkCrawler
 from Background.ThreadNetworkMetrics import ThreadNetworkMetrics
@@ -84,16 +85,18 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             db.commit()
             jsonResult['result']['request_id'] = hash_id
 
-            result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
+            #result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
+            result=db.query(DomainsWhois).filter(DomainsWhois.domain==urlparse(url).netloc).first()
             if result is None:
                 domains_whois_model = DomainsWhois()
-                domains_whois_model.domain=tldextract.extract(url).registered_domain
+                domains_whois_model.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
                 db.add(domains_whois_model)
                 db.commit()
-            result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
+            #result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
+            result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==urlparse(url).netloc).first()
             if result is None:
                 domains_network_metrics = DomainsNetworkMetrics()
-                domains_network_metrics.domain=tldextract.extract(url).registered_domain
+                domains_network_metrics.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
                 db.add(domains_network_metrics)
                 db.commit()
 
@@ -142,12 +145,12 @@ async def getReportDomain(url : str, db: Session = Depends(get_db)):
         try:
 
             domains_whois_model = DomainsWhois()
-            domains_whois_model.domain = tldextract.extract(url).registered_domain
+            domains_whois_model.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
             db.add(domains_whois_model)
             db.commit()
 
             domains_network_metrics = DomainsNetworkMetrics()
-            domains_network_metrics.domain = tldextract.extract(url).registered_domain
+            domains_network_metrics.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
             db.add(domains_network_metrics)
             db.commit()
 
@@ -199,7 +202,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
 @app.get("/api/v1/echo_effect/{request_id}")
 async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
     url_object = db.query(Urls).filter(Urls.request_id == request_id).first()
-    domain = tldextract.extract(url_object.url).registered_domain
+    domain = urlparse(url_object.url).netloc#tldextract.extract(url_object.url).registered_domain
 
 
     domains_network_metrics_object = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == domain).first()
@@ -224,7 +227,7 @@ async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
 @app.get("/api/v1/reliability/{request_id}")
 async def getReliability(request_id : str, db: Session = Depends(get_db)):
     url_object = db.query(Urls).filter(Urls.request_id == request_id).first()
-    domain = tldextract.extract(url_object.url).registered_domain
+    domain = urlparse(url_object.url).netloc#tldextract.extract(url_object.url).registered_domain
 
     domains_whois_object = db.query(DomainsWhois).filter(DomainsWhois.domain == domain).first()
 

@@ -26,8 +26,9 @@ d={}
 for row in spamreader:
     print(row['url'])
     #time.sleep(2)
-    #if row['url'].split("/")[2] in d:
-    #    continue
+    if row['url'].split("/")[2] in d:
+        continue
+    d[row['url'].split("/")[2]]=0
 
     page=requests.post('https://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
@@ -54,7 +55,7 @@ for row in spamreader:
     print(page.text)
     print(json.loads(page.text))
     #continue
-    page=requests.get('http://'+domain+'/api/v1/sentiationalism/'+request_id)
+    page=requests.get('http://'+domain+'/api/v1/sensationalism/'+request_id)
     print(page.text)
     print(json.loads(page.text))
 

@@ -64,7 +64,7 @@ class Danger():
         attention=torch.load(io.BytesIO(url.attention_title))
         result = self.lora_model(input_ids=feat, attention_mask=attention)
         sigmoid = torch.nn.Sigmoid()
-        print(torch.max(sigmoid(result['logits'].detach())))
+        #print(torch.max(sigmoid(result['logits'].detach())))
         #return torch.argmax(result['logits'].detach()).item()
         return torch.max(sigmoid(result['logits'].detach())).item()
 

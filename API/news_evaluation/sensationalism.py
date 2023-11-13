@@ -28,12 +28,7 @@ class Sensationalism:
         punct_count=self.__punct_count(url)
         check_emoji=self.__check_emoji(url)
 
-        print({'overall': numpy.average([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
-                'ratio_upper_case': ratio_upper_case,
-                'ratio_vowel_repetition': ratio_repeated_letters,
-                'punct_count': punct_count,
-                'check_emoji': check_emoji,
-        })
+
         return {'overall': numpy.average([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
                 'ratio_upper_case': ratio_upper_case,
                 'ratio_vowel_repetition': ratio_repeated_letters,
@@ -63,7 +58,7 @@ class Sensationalism:
         desc_eng = "There is at least one upper case word in the title" if ratio >0 else "There are no upper case words in the title"
 
         upc_ratio = {'overall':ratio,'description':desc_eng}
-        print({'overall':ratio,'description':desc_eng})
+        #print({'overall':ratio,'description':desc_eng})
 
         return upc_ratio
 
@@ -90,7 +85,7 @@ class Sensationalism:
         desc_eng = "There is at least one word with a repeated letter e.g. svegliaaa!" if ratio >0 else "There are no upper case words in the title"
 
         upc_ratio = {'overall':ratio,'description':desc_eng}
-        print({'overall':ratio,'description':desc_eng})
+        #print({'overall':ratio,'description':desc_eng})
 
         return upc_ratio
 
@@ -114,20 +109,14 @@ class Sensationalism:
                            'punct_num_weird':num_weird,'description_weird':desc_eng_weird,
                            'overall': 1 if num_weird > num_normal else 0, 'description': '1 if weird punctuation marks are more than normal ones'
                            }
-        print({'punct_num_normal':num_normal,'description_normal':desc_eng_normal,
-                           'punct_num_weird':num_weird,'description_weird':desc_eng_weird,
-                           'overall': 1 if num_weird > num_normal else 0, 'description': '1 if weird punctuation marks are more than normal ones'
-                           })
+
 
         return emp_punct_count
 
     def __check_emoji(self,url) -> Dict[str, Union[str, float]]:
         new_list = emojis.get(url.title)
 
-        print({
-                           'overall': 1 if len(new_list) > 0 else 0,
-                           'description': '1 if the is at least one emoji'
-                           })
+
         check_emoji = {
                            'overall': 1 if len(new_list) > 0 else 0,
                            'description': '1 if the is at least one emoji'
@@ -144,12 +133,7 @@ class Sensationalism:
         emotion_profile = self.emotion_analysis.emotions_by_sent(url.title)
         senitiment_profile['overall']=senitiment_profile['polarity']
         emotion_profile['overall']=np.average([value for value in emotion_profile.values()])
-        print({
-            'overall' : np.average([  senitiment_profile['overall'],  emotion_profile['overall']]),
-            'senitiment_profile' : senitiment_profile,
-            'emotion_profile' : emotion_profile
 
-        })
         return {
             'overall' : np.average([  senitiment_profile['overall'],  emotion_profile['overall']]),
             'senitiment_profile' : senitiment_profile,
@@ -178,12 +162,7 @@ class Sensationalism:
         #12	High school senior
         #6	Sixth grade
         #gunning_fog = (gunning_fog - 6) / (17 - 6)
-        print({
-            'overall' : np.average([flesch_reading_ease]),#,gunning_fog]),
-            'flesch_reading_ease' : flesch_reading_ease,
-            #'gunning_fog' : gunning_fog,
 
-        })
         return {
             'overall' : np.average([flesch_reading_ease]),#,gunning_fog]),
             'flesch_reading_ease' : flesch_reading_ease,
@@ -197,7 +176,6 @@ class Sensationalism:
     def get_clickbait_style(self, url) -> Dict[str, Union[str, float]]:
 
         linguistic_fetures=self.nlp(url.title)
-        print(type(linguistic_fetures))
         count_token = 0
 
         personals=0
@@ -222,7 +200,6 @@ class Sensationalism:
                 senteces_interrogative+=1
 
             for token in sent:
-                print(token.text,token.lemma_,token.pos_,token.morph,token.dep_)
 
                 count_token+=1
 
@@ -262,15 +239,7 @@ class Sensationalism:
         numeral_score=modals/count_token if count_token>0 else 0
         interrogative_score=senteces_interrogative/senteces if senteces>0 else 0
         shortened_form_score=shortened_form/count_token if count_token>0 else 0
-        print({
-            'overall': float(numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
-            'personal_score': personal_score,
-            'intensifier_score': intensifier_score,
-            'modal_scoree': modal_score,
-            'numeral_score': numeral_score,
-            'shortened_form_score': shortened_form_score,
-            'interrogative_score': interrogative_score,
-        })
+
         return {
             'overall': float(numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
             'personal_score': personal_score,

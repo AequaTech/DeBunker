@@ -1,4 +1,6 @@
 import time, csv, random
+from urllib.parse import urlparse
+
 import pandas as pd
 import time
 from tqdm import tqdm
@@ -46,7 +48,8 @@ class WebCrawler:
             try:
                 if link['href'].startswith('/'): #fondamentale per i siti con riferimenti relativi e non assoluti (es. ansa.it)
                     internal.append(a_page.split(':')[0]+'://'+a_domain+link['href'])
-                elif a_domain == tldextract.extract(link['href']).registered_domain:
+                #elif a_domain == tldextract.extract(link['href']).registered_domain:
+                elif a_domain == urlparse(link['href']).netloc:
                     internal.append(link['href'])
                 else:
                     try:
@@ -86,7 +89,8 @@ class WebCrawler:
                     continue
 
         for url in internal + external+all_internal:
-            target = tldextract.extract(url).registered_domain
+            #target = tldextract.extract(url).registered_domain
+            target = urlparse(url).netloc
             edge = domain + ' ' + target
             if edge not in edges: edges[edge] = 0
             edges[edge] += 1
