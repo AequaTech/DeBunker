@@ -26,9 +26,9 @@ d={}
 for row in spamreader:
     print(row['url'])
     #time.sleep(2)
-    if row['url'].split("/")[2] in d:
-        continue
-    d[row['url'].split("/")[2]]=0
+    #if row['url'].split("/")[2] in d:
+    #    continue
+    #d[row['url'].split("/")[2]]=0
 
     page=requests.post('https://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
