@@ -7,7 +7,7 @@ from Background.WebCrawler import WebCrawler
 
 sys.path.append('../../')
 from sqlalchemy import create_engine,or_,and_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database import Links,Base, DomainsNetworkMetrics
 import datetime
 
@@ -22,8 +22,8 @@ class ThreadNetworkCrawler:
             #connect_args={"check_same_thread": False}
         )
 
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        Base.metadata.create_all(bind=engine)
+        SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+        #Base.metadata.create_all(bind=engine)
 
         db = SessionLocal()
         current_time = datetime.datetime.utcnow()
@@ -53,6 +53,7 @@ class ThreadNetworkCrawler:
                 link_model.weight=edge[2]
                 db.merge(link_model)
                 db.commit()
+        SessionLocal.close()
 
 if __name__ == "__main__":
 

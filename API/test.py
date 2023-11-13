@@ -29,7 +29,7 @@ for row in spamreader:
     #if row['url'].split("/")[2] in d:
     #    continue
 
-    page=requests.post('http://'+domain+'/api/v1/scrape',params={'url': row['url'] })
+    page=requests.post('https://'+domain+'/api/v1/scrape',params={'url': row['url'] })
 
     print(page.status_code)
     print(page.text)

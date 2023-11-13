@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../../')
 from sqlalchemy import create_engine, or_, and_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
 import datetime
 import igraph as ig
@@ -22,8 +22,8 @@ class ThreadNetworkMetrics:
             #connect_args={"check_same_thread": False}
         )
 
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        Base.metadata.create_all(bind=engine)
+        SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+        #Base.metadata.create_all(bind=engine)
 
         db = SessionLocal()
         link_objects = db.query(Links)
@@ -130,6 +130,7 @@ class ThreadNetworkMetrics:
 
                 db.commit()
                 #print(authority_score[i],hub_score[i])
+        SessionLocal.close()
 
 if __name__ == "__main__":
     ThreadNetworkMetrics.retrieveDomains()

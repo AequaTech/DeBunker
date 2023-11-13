@@ -52,11 +52,8 @@ def get_db():
         db.close()
 
 
-#SQLALCHEMY_DATABASE_URL = "sqlite:///./debunkerAPI.db"
-#SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://debunker:1203u249@db:9001/debunker"
+
 preprocessing_spacy=PreprocessingSpacy('it')
-
-
 
 
 
