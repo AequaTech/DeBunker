@@ -10,10 +10,12 @@ from sqlalchemy import create_engine,or_,and_
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database import Links,Base, DomainsNetworkMetrics,get_db
 import datetime
+from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends
 
 class ThreadNetworkCrawler:
     @staticmethod
-    def retrieveDomains():
+    def retrieveDomains(db: Session = Depends(get_db)):
         #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
         #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@localhost:9000/debunker?"
 
@@ -25,7 +27,6 @@ class ThreadNetworkCrawler:
         #SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
         #Base.metadata.create_all(bind=engine)
 
-        db =  get_db()
 
         current_time = datetime.datetime.utcnow()
 
