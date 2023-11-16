@@ -29,7 +29,7 @@ class WebCrawler:
 
     @staticmethod
     def __find_links(a_page, a_domain):
-        print(a_page,a_domain)
+        #print(a_page,a_domain)
         try:
             req = requests.get(a_page, timeout=10,headers=hdr)
         except Exception as e:
@@ -97,8 +97,9 @@ class WebCrawler:
 
         _edges=[]
         for key, value in edges.items():
-            source,target=key.split(' ')
-            _edges.append((source,target,value))
+            if len(key.split(' '))==2:
+                source,target=key.split(' ')
+                _edges.append((source,target,value))
 
         return _edges
 
