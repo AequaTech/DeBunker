@@ -29,7 +29,7 @@ class ThreadWhoIs:
 
         ten_weeks_ago = current_time - datetime.timedelta(weeks=10)
         domains_to_retrieve = db.query(DomainsWhois).filter(
-            or_(DomainsWhois.overall == None, DomainsWhois.timestamp < ten_weeks_ago))
+            or_(DomainsWhois.overall == None, DomainsWhois.timestamp < ten_weeks_ago)).all()
         # @urbinati, ragionare meglio l'overall sul parametro solidity
         for domain_to_retrieve in domains_to_retrieve:
             try:

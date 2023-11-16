@@ -27,7 +27,7 @@ class ThreadNetworkMetrics:
 
         db=next(get_db())
 
-        link_objects = db.query(Links)
+        link_objects = db.query(Links).all()
         links = []
         for link_object in link_objects:
             if link_object.weight > 0:
