@@ -12,7 +12,7 @@ from PreProcessing.PreProcessing import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
 import hashlib
 from fastapi import FastAPI, Depends
-from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics, getdb
+from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics, get_db
 from sqlalchemy.orm import Session
 from datetime import datetime, time,timedelta
 from news_evaluation.danger import Danger
@@ -281,5 +281,5 @@ def NetworkCrawler():
 tomorrow_start = datetime.combine(datetime.today(), time(0, 0)) + timedelta(1)
 
 #scheduler.add_job(NetworkCrawler, 'interval', hours=24,max_instances=1,next_run_time=tomorrow_start)
-scheduler.add_job(NetworkCrawler, 'interval', minutes=5,max_instances=1)#,next_run_time=tomorrow_start)
+scheduler.add_job(NetworkCrawler, 'interval', minutes=1,max_instances=1)#,next_run_time=tomorrow_start)
 scheduler.start()
