@@ -23,7 +23,7 @@ class ThreadWhoIs:
         #SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
         #Base.metadata.create_all(bind=engine)
 
-        db = get_db()
+        db=next(get_db())
 
         current_time = datetime.datetime.utcnow()
 

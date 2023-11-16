@@ -15,7 +15,7 @@ from fastapi import FastAPI, Depends
 
 class ThreadNetworkCrawler:
     @staticmethod
-    def retrieveDomains(db: Session = Depends(get_db)):
+    def retrieveDomains():
         #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
         #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@localhost:9000/debunker?"
 
@@ -27,6 +27,7 @@ class ThreadNetworkCrawler:
         #SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
         #Base.metadata.create_all(bind=engine)
 
+        db=next(get_db())
 
         current_time = datetime.datetime.utcnow()
 
