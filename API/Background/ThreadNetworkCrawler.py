@@ -33,6 +33,15 @@ class ThreadNetworkCrawler:
 
         ten_weeks_ago = current_time - datetime.timedelta(weeks=10)
         print(ten_weeks_ago)
+        domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.overall == None).count()
+        print(domains_to_retrieve)
+        domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.timestamp<ten_weeks_ago).count()
+        print(domains_to_retrieve)
+        domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(or_(DomainsNetworkMetrics.overall == None,DomainsNetworkMetrics.timestamp<ten_weeks_ago)).count()
+        print(domains_to_retrieve)
+        domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(or_(DomainsNetworkMetrics.overall == None,DomainsNetworkMetrics.timestamp<ten_weeks_ago)).one()
+        print(domains_to_retrieve)
+
         domains_to_retrieve=db.query(DomainsNetworkMetrics).filter(or_(DomainsNetworkMetrics.overall == None,DomainsNetworkMetrics.timestamp<ten_weeks_ago)).all()
         print(domains_to_retrieve)
         for domain_to_retrieve in domains_to_retrieve:
