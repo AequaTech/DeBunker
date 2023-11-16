@@ -12,7 +12,7 @@ from PreProcessing.PreProcessing import BertBasedTokenizer
 from webScraper.WebScraper import WebScraper
 import hashlib
 from fastapi import FastAPI, Depends
-from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics
+from database import engine, SessionLocal,Base,Urls,DomainsWhois, DomainsNetworkMetrics, getdb
 from sqlalchemy.orm import Session
 from datetime import datetime, time,timedelta
 from news_evaluation.danger import Danger
@@ -45,12 +45,7 @@ app.add_middleware(
 )
 Base.metadata.create_all(bind=engine)
 
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
+
 
 
 

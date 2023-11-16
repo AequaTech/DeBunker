@@ -2,7 +2,7 @@ import sys
 sys.path.append('../../')
 from sqlalchemy import create_engine, or_, and_
 from sqlalchemy.orm import sessionmaker, scoped_session
-from database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics
+from database import Links,Base,Urls,DomainsWhois,DomainsNetworkMetrics, get_db
 import datetime
 import igraph as ig
 import numpy as np
@@ -15,17 +15,18 @@ class ThreadNetworkMetrics:
     @staticmethod
     def retrieveDomains():
 
-        SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
+        #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
 
-        engine = create_engine(
-            SQLALCHEMY_DATABASE_URL,
-            #connect_args={"check_same_thread": False}
-        )
+        #engine = create_engine(
+        #    SQLALCHEMY_DATABASE_URL,
+        #    #connect_args={"check_same_thread": False}
+        #)
 
-        SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+        #SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
         #Base.metadata.create_all(bind=engine)
 
-        db = SessionLocal()
+        db = get_db()
+
         link_objects = db.query(Links)
         links = []
         for link_object in link_objects:
@@ -130,7 +131,7 @@ class ThreadNetworkMetrics:
 
                 db.commit()
                 #print(authority_score[i],hub_score[i])
-        SessionLocal.close()
+
 
 if __name__ == "__main__":
     ThreadNetworkMetrics.retrieveDomains()

@@ -8,6 +8,9 @@ from sqlalchemy import Column, Integer, String, Date, Text,TIMESTAMP
 from datetime import datetime
 
 
+
+
+
 #SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
 SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
 
@@ -21,6 +24,13 @@ engine = create_engine(
 )
 
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+
+def get_db():
+    try:
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()
 
 Base = declarative_base()
 
