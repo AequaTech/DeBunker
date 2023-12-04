@@ -82,18 +82,22 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
 
             #result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
             result=db.query(DomainsWhois).filter(DomainsWhois.domain==urlparse(url).netloc).first()
+            print(result)
             if result is None:
                 domains_whois_model = DomainsWhois()
                 domains_whois_model.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
                 db.add(domains_whois_model)
                 db.commit()
+                print("inserted DomainsWhois",urlparse(url).netloc)
             #result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
             result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==urlparse(url).netloc).first()
+            print(result)
             if result is None:
                 domains_network_metrics = DomainsNetworkMetrics()
                 domains_network_metrics.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
                 db.add(domains_network_metrics)
                 db.commit()
+                print("inserted DomainsNetworkMetrics",urlparse(url).netloc)
 
         return  jsonResult
 
@@ -138,20 +142,25 @@ async def getReportDomain(url : str, db: Session = Depends(get_db)):
     if jsonResult['status'] == 200:
 
         try:
+            result=db.query(DomainsWhois).filter(DomainsWhois.domain==urlparse(url).netloc).first()
+            if result is None:
+                print('reported DomainsWhois',urlparse(url).netloc)
+                domains_whois_model = DomainsWhois()
+                domains_whois_model.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
+                db.add(domains_whois_model)
+                db.commit()
 
-            domains_whois_model = DomainsWhois()
-            domains_whois_model.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
-            db.add(domains_whois_model)
-            db.commit()
-
-            domains_network_metrics = DomainsNetworkMetrics()
-            domains_network_metrics.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
-            db.add(domains_network_metrics)
-            db.commit()
+            result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==urlparse(url).netloc).first()
+            if result is None:
+                print('reported DomainsNetworkMetrics',urlparse(url).netloc)
+                domains_network_metrics = DomainsNetworkMetrics()
+                domains_network_metrics.domain = urlparse(url).netloc#tldextract.extract(url).registered_domain
+                db.add(domains_network_metrics)
+                db.commit()
 
             return { 'status': 200, 'message': 'domain has been successfully reported'}
         except IntegrityError:
-            return { 'status': 200, 'message': 'domain had already been reported'}
+            return { 'status': 500, 'message': 'IntegrityError'}
     else:
         return {'status': 400, 'message': 'the domain is not available or does not exist'}
 
@@ -283,3 +292,5 @@ tomorrow_start = datetime.combine(datetime.today(), time(0, 0)) + timedelta(1)
 scheduler.add_job(NetworkCrawler, 'interval', hours=24,max_instances=1,next_run_time=tomorrow_start)
 #scheduler.add_job(NetworkCrawler, 'interval', minutes=1,max_instances=1)#,next_run_time=tomorrow_start)
 scheduler.start()
+
+#https://www.ilpost.it/2023/11/16/gaza-ospedale-al-shifa-armi/?homepagePosition=0
