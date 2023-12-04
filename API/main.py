@@ -80,29 +80,30 @@ async def retrieveUrl(url : str, db: Session = Depends(get_db)):
             db.commit()
             jsonResult['result']['request_id'] = hash_id
 
-            #result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
-            result=db.query(DomainsWhois).filter(DomainsWhois.domain==urlparse(url).netloc).first()
-            print(result)
-            if result is None:
-                domains_whois_model = DomainsWhois()
-                domains_whois_model.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
-                db.add(domains_whois_model)
-                db.commit()
-                print("inserted DomainsWhois",urlparse(url).netloc)
-            #result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
-            result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==urlparse(url).netloc).first()
-            print(result)
-            if result is None:
-                domains_network_metrics = DomainsNetworkMetrics()
-                domains_network_metrics.domain=urlparse(url).netloc#tldextract.extract(url).registered_domain
-                db.add(domains_network_metrics)
-                db.commit()
-                print("inserted DomainsNetworkMetrics",urlparse(url).netloc)
 
         return  jsonResult
 
 
     else:
+
+        # result=db.query(DomainsWhois).filter(DomainsWhois.domain==tldextract.extract(url).registered_domain).first()
+        result = db.query(DomainsWhois).filter(DomainsWhois.domain == urlparse(url).netloc).first()
+        print(result)
+        if result is None:
+            domains_whois_model = DomainsWhois()
+            domains_whois_model.domain = urlparse(url).netloc  # tldextract.extract(url).registered_domain
+            db.add(domains_whois_model)
+            db.commit()
+            print("inserted DomainsWhois", urlparse(url).netloc)
+        # result=db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain==tldextract.extract(url).registered_domain).first()
+        result = db.query(DomainsNetworkMetrics).filter(DomainsNetworkMetrics.domain == urlparse(url).netloc).first()
+        print(result)
+        if result is None:
+            domains_network_metrics = DomainsNetworkMetrics()
+            domains_network_metrics.domain = urlparse(url).netloc  # tldextract.extract(url).registered_domain
+            db.add(domains_network_metrics)
+            db.commit()
+            print("inserted DomainsNetworkMetrics", urlparse(url).netloc)
 
         return {'status':200,
                 'message':'the request was successful',
