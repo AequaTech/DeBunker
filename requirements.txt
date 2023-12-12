@@ -86,5 +86,5 @@ urllib3==2.0.4
 uvicorn==0.21.1
 w3lib==2.1.2
 wasabi==1.1.2
-whois==0.9.27
+python-whois==0.8
 zope.interface==6.0
