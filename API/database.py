@@ -12,7 +12,7 @@ from datetime import datetime
 
 
 #SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
-SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
+SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?charset=utf8mb4"
 #SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:root@localhost:8889/debunker?charset=utf8mb4"
 
 engine = create_engine(
