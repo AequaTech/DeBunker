@@ -26,8 +26,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 """from fastapi_utils.tasks import repeat_every"""
-ThreadWhoIs().retrieveDomains()
-exit()
+
 
 danger = Danger('dbmdz/bert-base-italian-cased', 2)
 sensationalism = Sensationalism()
