@@ -6,6 +6,7 @@ WORKDIR /app
 ADD requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
 RUN python3 -m spacy download it_core_news_lg
+RUN apt-get install -y python-whois
 ADD . /app
 WORKDIR /app/API
 
