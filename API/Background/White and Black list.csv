@@ -226,3 +226,5 @@ dottoremaeveroche.it,aequa-tech.com,whitelist
 wwe.aifa.gov.it,aequa-tech.com,whitelist
 www.openaire.eu,aequa-tech.com,whitelist
 www.sciencedaily.com,aequa-tech.com,whitelist
+voxnews.info,aequa-tech.com,blacklist
+www.vox.com,aequa-tech.com,blacklist

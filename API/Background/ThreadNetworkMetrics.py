@@ -121,6 +121,7 @@ class ThreadNetworkMetrics:
 
                 domains_network_metrics.white_community = 0
                 domains_network_metrics.black_community = 0
+
                 for n in communities[node['community']]:
                     if G.vs[n]['name'] in white_black:
                         if 'blacklist' in white_black[G.vs[n]['name']]['list-type']:
@@ -128,6 +129,8 @@ class ThreadNetworkMetrics:
                         if 'whitelist' in white_black[G.vs[n]['name']]['list-type']:
                             domains_network_metrics.white_community +=1
 
+                domains_network_metrics.white_community=domains_network_metrics.white_community/len(communities[node['community']])
+                domains_network_metrics.black_community=domains_network_metrics.black_community/len(communities[node['community']])
 
                 db.commit()
                 #print(authority_score[i],hub_score[i])

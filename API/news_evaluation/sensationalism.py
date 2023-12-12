@@ -10,6 +10,7 @@ from random import random
 import spacy
 import sys
 
+
 class Sensationalism:
 
     def __init__(self) -> None:
@@ -29,11 +30,12 @@ class Sensationalism:
         check_emoji=self.__check_emoji(url)
 
 
-        return {'overall': numpy.average([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
+        return {'overall': numpy.max([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
                 'ratio_upper_case': ratio_upper_case,
                 'ratio_vowel_repetition': ratio_repeated_letters,
                 'punct_count': punct_count,
                 'check_emoji': check_emoji,
+                'description': "overall report the max value among the single informal style features"
         }
 
     def __ratio_upper_case(self, url) ->  Dict[str, Union[str, float]]:
@@ -74,7 +76,7 @@ class Sensationalism:
 
         title = url.title
 
-        up_pattern = re.compile('[A-z]{1,}([aA]{3,}|[eE]{3,}|[iI]{3,}|[oO]{3,}|[uU]{3,})')
+        up_pattern = re.compile('[A-z]{1,}([aA]{2,}|[eE]{2,}|[iI]{2,}|[oO]{2,}|[uU]{2,})')
         all_w_pattern = re.compile('\w+')
 
         n_upper_words = len(re.findall(up_pattern,title))
@@ -82,7 +84,7 @@ class Sensationalism:
 
         ratio = n_upper_words/n_words if n_words>0 else 0
 
-        desc_eng = "There is at least one word with a repeated letter e.g. svegliaaa!" if ratio >0 else "There are no upper case words in the title"
+        desc_eng = "There is at least one word with a repeated letter e.g. svegliaaa!" if ratio >0 else "There are no words with a repeated letter e.g. svegliaaa!"
 
         upc_ratio = {'overall':ratio,'description':desc_eng}
         #print({'overall':ratio,'description':desc_eng})
@@ -96,8 +98,8 @@ class Sensationalism:
 
         title = url.title
 
-        punct_normal = re.compile('(\?|.|,|;|:)')
-        punct_weird = re.compile('(\!|(...)|…|\*|=|$)')
+        punct_normal = re.compile('(\?|\.|\,|\;|\:)')
+        punct_weird = re.compile('(\!|(\.\.\.)|…|\*|\=|\$)')
 
         num_normal = len(re.findall(punct_normal,title))
         num_weird = len(re.findall(punct_weird,title))
@@ -107,7 +109,7 @@ class Sensationalism:
 
         emp_punct_count = {'punct_num_normal':num_normal,'description_normal':desc_eng_normal,
                            'punct_num_weird':num_weird,'description_weird':desc_eng_weird,
-                           'overall': 1 if num_weird > num_normal else 0, 'description': '1 if weird punctuation marks are more than normal ones'
+                           'overall': num_weird/(num_weird+num_normal) if num_weird+num_normal > 0 else 0, 'description': 'ratio between weird punctuation marks and the total number of punctuaction marks'
                            }
 
 
@@ -118,8 +120,8 @@ class Sensationalism:
 
 
         check_emoji = {
-                           'overall': 1 if len(new_list) > 0 else 0,
-                           'description': '1 if the is at least one emoji'
+                           'overall': len(new_list)/len(url.title.split()) if len(url.title.split()) > 0 else 0,
+                           'description': 'ratio of emojis in the text and tokens'
                            }
         return check_emoji
 
@@ -129,16 +131,16 @@ class Sensationalism:
     ############
     def get_affective_analysis(self, url) -> Dict[str, Union[str, float]]:
 
-        senitiment_profile = self.sentiment_analysis.sentiment_by_sent(url.title)
+        sentiment_profile = self.sentiment_analysis.sentiment_by_sent(url.title)
         emotion_profile = self.emotion_analysis.emotions_by_sent(url.title)
-        senitiment_profile['overall']=senitiment_profile['polarity']
+        sentiment_profile['overall']=abs(sentiment_profile['polarity'])
         emotion_profile['overall']=np.average([value for value in emotion_profile.values()])
 
         return {
-            'overall' : np.average([  senitiment_profile['overall'],  emotion_profile['overall']]),
-            'senitiment_profile' : senitiment_profile,
-            'emotion_profile' : emotion_profile
-
+            'overall' : np.max([  sentiment_profile['overall'],  emotion_profile['overall']]),
+            'sentiment_profile' : sentiment_profile,
+            'emotion_profile' : emotion_profile,
+            'description' : "the max value between emotion and sentiment profiles"
         }
 
 
@@ -241,13 +243,14 @@ class Sensationalism:
         shortened_form_score=shortened_form/count_token if count_token>0 else 0
 
         return {
-            'overall': float(numpy.average([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
+            'overall': float(numpy.max([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
             'personal_score': personal_score,
             'intensifier_score': intensifier_score,
             'modal_scoree': modal_score,
             'numeral_score': numeral_score,
             'shortened_form_score': shortened_form_score, #@cignarella, come trovo le interrogative?
             'interrogative_score': interrogative_score,
+            'desciption': 'max value among clickbait features'
         }
 
 

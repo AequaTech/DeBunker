@@ -42,21 +42,28 @@ class ThreadWhoIs:
                 domain_to_retrieve.creation_date = w.creation_date
                 domain_to_retrieve.expiration_date = w.expiration_date
                 domain_to_retrieve.last_updated = w.last_updated
-                days_since_creation = (current_time - datetime.timedelta(weeks=53 * 5)).day
-                days_since_last_update = (current_time - datetime.timedelta(weeks=53 * 5)).day
 
-                if days_since_creation >= (5 * 365) and days_since_last_update >= (365):
-                    overall = 1
-                elif days_since_creation >= (5 * 365) and days_since_last_update < (365):
-                    overall = 0.75
-                elif days_since_creation < (5 * 365) and days_since_last_update >= (365):
-                    overall = 0.50
-                elif days_since_creation < (5 * 365) and days_since_last_update < (365):
-                    overall = 0.25
+                if w.creation_date is None or w.last_updated is None:
+                    overall = None
+                else:
+
+                    days_since_creation = (current_time - w.creation_date).days
+                    days_since_last_update = (current_time - w.last_updated).days
+
+                    if days_since_creation >= (5 * 365) and days_since_last_update >= (365):
+                        overall = 1
+                    elif days_since_creation >= (5 * 365) and days_since_last_update < (365):
+                        overall = 0.75
+                    elif days_since_creation < (5 * 365) and days_since_last_update >= (365):
+                        overall = 0.50
+                    elif days_since_creation < (5 * 365) and days_since_last_update < (365):
+                        overall = 0.25
 
                 domain_to_retrieve.overall = overall
                 db.commit()
-            except:
+            except Exception as e:
+                print('ThreadWhoIs: ',domain_to_retrieve.domain)
+                print(e)
                 continue
 
 

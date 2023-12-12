@@ -13,13 +13,14 @@ from datetime import datetime
 
 #SQLALCHEMY_DATABASE_URL = "sqlite:///./debunker.db"
 SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:309urje4@db:3306/debunker?"
+#SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://root:root@localhost:8889/debunker?charset=utf8mb4"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, pool_recycle = 3600,
                              pool_size = 5,
                              max_overflow = 10,
                              pool_timeout = 30,
-                             pool_pre_ping = True
+                             pool_pre_ping = True,
 
 )
 
@@ -36,6 +37,7 @@ Base = declarative_base()
 
 class Urls(Base):
     __tablename__ = "urls"
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8mb4','mysql_collate':'utf8mb4_general_ci'}
 
     request_id = Column(String(150), primary_key=True, index=True)
     url = Column(Text)
@@ -51,8 +53,11 @@ class Urls(Base):
     is_reported = Column(Integer,default=0)
 
 
+
 class DomainsWhois(Base):
     __tablename__ = "domains_whois"
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8mb4','mysql_collate':'utf8mb4_general_ci'}
+
     domain = Column(String(150), primary_key=True, index=True)
     overall = Column(Float,default=None)
     registrant_country = Column(Text,default=None)
@@ -64,6 +69,8 @@ class DomainsWhois(Base):
 
 class DomainsNetworkMetrics(Base):
     __tablename__ = "domains_network_metrics"
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8mb4','mysql_collate':'utf8mb4_general_ci'}
+
     domain = Column(String(150), primary_key=True, index=True)
     overall=Column(Float,default=None)
     pagerank=Column(Float,default=None)
@@ -83,6 +90,7 @@ class DomainsNetworkMetrics(Base):
 
 class List(Base):
     __tablename__ = "list"
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8mb4','mysql_collate':'utf8mb4_general_ci'}
 
     domain    = Column(String(150), primary_key=True, index=True)
     source    = Column(Text,default=None)
@@ -90,6 +98,7 @@ class List(Base):
 
 class Links(Base):
     __tablename__ = "links"
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset':'utf8mb4','mysql_collate':'utf8mb4_general_ci'}
 
     source = Column(String(150), primary_key=True, index=True)
     target = Column(String(150), primary_key=True, index=True)

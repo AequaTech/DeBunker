@@ -26,6 +26,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 """from fastapi_utils.tasks import repeat_every"""
+ThreadWhoIs().retrieveDomains()
+exit()
 
 danger = Danger('dbmdz/bert-base-italian-cased', 2)
 sensationalism = Sensationalism()
@@ -44,8 +46,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 Base.metadata.create_all(bind=engine)
-
-
 
 
 
@@ -192,7 +192,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
 
         return { 'status': 200,
                  'message': 'the request was successful',
-                 'result': { 'overall': numpy.average([informal_style['overall'], sentiment_affective['overall'],readability['overall'],colloquial['overall'] ]),
+                 'result': { 'overall': numpy.max([informal_style['overall'], sentiment_affective['overall'],readability['overall'],colloquial['overall'] ]),
                              'informal_style' :informal_style,
                              'sentiment_affective' :sentiment_affective,
                              'readability':readability,
@@ -218,12 +218,13 @@ async def getEchoEffect(request_id : str, db: Session = Depends(get_db)):
     else:
         return { 'status': 200,
                  'message': 'the request was successful',
-                 'result': { 'overall': domains_network_metrics_object.authority*domains_network_metrics_object.betweenness,
+                 'result': { 'overall': domains_network_metrics_object.hub*domains_network_metrics_object.betweenness,
                              'pagerank' : domains_network_metrics_object.pagerank,
                              'closeness' : domains_network_metrics_object.closeness,
                              'betweenness' : domains_network_metrics_object.betweenness,#[0,---]
                              'hub' : domains_network_metrics_object.hub,
                              'authority' : domains_network_metrics_object.authority, #[0,1]
+                             'description' : 'A value close to 1 shows an high value of impactfulness of the domain in the network (it is a measure of structural centrality, it does not imply anything of the quality of the news it shares)'
                  }}
 
 
@@ -251,14 +252,13 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              'blacklist': json.loads(domains_network_metrics_object.black_list),
                              'in_blacklist': domains_network_metrics_object.is_blacklist,
                              'neighborhood': {
-                                 'overall': domains_network_metrics_object.white_community/(domains_network_metrics_object.white_community+domains_network_metrics_object.black_community) if (domains_network_metrics_object.white_community+domains_network_metrics_object.black_community)>0 else 0,
-                                 # @urbinati, da decidere. Se è in black list metterei 0, altrimenti, metterei
-                                 # white_community/(white_community+black_community)
+                                'overall': domains_network_metrics_object.black_community,
                                 'degree_in': domains_network_metrics_object.degree_in,
                                 'degree_out': domains_network_metrics_object.degree_out,
                                 'neighborhood_list': json.loads(domains_network_metrics_object.neighborhood_list), #[('domain1', random.randint(1,100)),('domain2', random.randint(1,100)),('domain3', random.randint(1,100)),('domain4', random.randint(1,100)),('domain5', random.randint(1,100))],
                                 'black_community': domains_network_metrics_object.black_community,
                                 'white_community': domains_network_metrics_object.white_community,
+                                'description': 'Portion of untrustable domains in the community (collection of domains with high interaction with the current domain)'
                              },
 
                              'solidity': {
@@ -266,11 +266,41 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                                    'registrant_country': domains_whois_object.registrant_country,
                                    'creation_date': domains_whois_object.creation_date,
                                    'expiration_date': domains_whois_object.expiration_date,
-                                   'last_updated': domains_whois_object.expiration_date
+                                   'last_updated': domains_whois_object.expiration_date,
+                                   'description': 'An high solidity means that the domain exists since a lot of time and that it is often updated'
                              }
                         }
                  }
 
+
+@app.get("/api/v1/available_domains/{page}/{page_size}")
+async def getAvailableDomains(page: int, page_size: int, db: Session = Depends(get_db)):
+
+    print(page,page_size)
+    domains = db.query(DomainsWhois).order_by(DomainsWhois.domain.asc()).offset(page*page_size).limit(page_size)
+    print(domains)
+
+    return { 'status': 200,
+                 'message': 'the request was successful (random values)',
+                 'result': {
+                             'urls': [domain.domain for domain in domains ]
+                        }
+           }
+
+
+@app.get("/api/v1/available_urls/{page}/{page_size}")
+async def getAvailableUrls(page: int, page_size: int, db: Session = Depends(get_db)):
+
+    print(page,page_size)
+    urls = db.query(Urls).order_by(Urls.url.asc()).offset(page*page_size).limit(page_size)
+    print(urls)
+
+    return { 'status': 200,
+                 'message': 'the request was successful (random values)',
+                 'result': {
+                             'urls': [url.url for url in urls ]
+                        }
+           }
 
 
 
@@ -294,4 +324,3 @@ scheduler.add_job(NetworkCrawler, 'interval', hours=24,max_instances=1,next_run_
 #scheduler.add_job(NetworkCrawler, 'interval', minutes=1,max_instances=1)#,next_run_time=tomorrow_start)
 scheduler.start()
 
-#https://www.ilpost.it/2023/11/16/gaza-ospedale-al-shifa-armi/?homepagePosition=0
