@@ -32,6 +32,7 @@ class WebCrawler:
         #print(a_page,a_domain)
         try:
             req = requests.get(a_page, timeout=10,headers=hdr)
+            time.sleep(3)
         except Exception as e:
             print(e)
             return [], []
@@ -57,7 +58,7 @@ class WebCrawler:
                             external.append(re.search('(http|https)://.+?/', link['href']).group())
 
                     except Exception as e:
-                        print(e)
+                        #print(e)
                         continue
             except Exception as e:
                 print(e)
