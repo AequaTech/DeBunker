@@ -250,7 +250,7 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              'whitelist': json.loads(domains_network_metrics_object.white_list),
                              'blacklist': json.loads(domains_network_metrics_object.black_list),
                              'in_blacklist': domains_network_metrics_object.is_blacklist,
-                             'in_whitelist': 1 if len(json.loads(domains_network_metrics_object.black_list))>1 else 0,
+                             'in_whitelist': 1 if len(json.loads(domains_network_metrics_object.white_list['sources']))>1 else 0,
                              #'in_greylist': domains_network_metrics_object.is_blacklist,
                              'neighborhood': {
                                 'overall': domains_network_metrics_object.black_community,
