@@ -191,7 +191,7 @@ async def getSentiationalism(request_id : str, db: Session = Depends(get_db)):
 
         return { 'status': 200,
                  'message': 'the request was successful',
-                 'result': { 'overall': numpy.max([informal_style['overall'], sentiment_affective['overall'],readability['overall'],colloquial['overall'] ]),
+                 'result': { 'overall': numpy.median([round(informal_style['overall'],3), round(sentiment_affective['overall'],3),round(readability['overall'],3),round(colloquial['overall'],3) ]),
                              'informal_style' :informal_style,
                              'sentiment_affective' :sentiment_affective,
                              'readability':readability,
@@ -250,6 +250,8 @@ async def getReliability(request_id : str, db: Session = Depends(get_db)):
                              'whitelist': json.loads(domains_network_metrics_object.white_list),
                              'blacklist': json.loads(domains_network_metrics_object.black_list),
                              'in_blacklist': domains_network_metrics_object.is_blacklist,
+                             'in_whitelist': 1 if len(json.loads(domains_network_metrics_object.black_list))>1 else 0,
+                             #'in_greylist': domains_network_metrics_object.is_blacklist,
                              'neighborhood': {
                                 'overall': domains_network_metrics_object.black_community,
                                 'degree_in': domains_network_metrics_object.degree_in,

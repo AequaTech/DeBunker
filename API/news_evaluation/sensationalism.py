@@ -137,7 +137,7 @@ class Sensationalism:
         emotion_profile['overall']=np.average([value for value in emotion_profile.values()])
 
         return {
-            'overall' : np.max([  sentiment_profile['overall'],  emotion_profile['overall']]),
+            'overall' : np.median([  round(sentiment_profile['overall'],3),  round(emotion_profile['overall'],3)]),
             'sentiment_profile' : sentiment_profile,
             'emotion_profile' : emotion_profile,
             'description' : "the max value between emotion and sentiment profiles"
@@ -243,14 +243,14 @@ class Sensationalism:
         shortened_form_score=shortened_form/count_token if count_token>0 else 0
 
         return {
-            'overall': float(numpy.max([personal_score,intensifier_score,modal_score,numeral_score,shortened_form_score,interrogative_score])),
+            'overall': float(numpy.median([round(personal_score,3),round(intensifier_score,3),round(modal_score,3),round(numeral_score,3),round(shortened_form_score,3),round(interrogative_score,3)])),
             'personal_score': personal_score,
             'intensifier_score': intensifier_score,
-            'modal_scoree': modal_score,
+            'modal_score': modal_score,
             'numeral_score': numeral_score,
-            'shortened_form_score': shortened_form_score, #@cignarella, come trovo le interrogative?
+            'shortened_form_score': shortened_form_score,
             'interrogative_score': interrogative_score,
-            'desciption': 'max value among clickbait features'
+            'description': 'median value among clickbait features'
         }
 
 
