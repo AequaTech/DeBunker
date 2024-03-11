@@ -7,8 +7,6 @@ from peft import LoraConfig, get_peft_model
 from peft import set_peft_model_state_dict
 import numpy as np
 
-
-
 class Danger():
     """Class that implements the danger dimension that consist in detecting stereotype, flame, irony, and sarcasm.
     @simona spieghi meglio cosa viene utilizzata per fare la prediction?
@@ -63,10 +61,12 @@ class Danger():
         feat=torch.load(io.BytesIO(url.feat_title))
         attention=torch.load(io.BytesIO(url.attention_title))
         result = self.lora_model(input_ids=feat, attention_mask=attention)
+        #softmax = torch.nn.Softmax()
+        #return softmax(result['logits'].detach())
+
         sigmoid = torch.nn.Sigmoid()
-        #print(torch.max(sigmoid(result['logits'].detach())))
-        #return torch.argmax(result['logits'].detach()).item()
-        return torch.max(sigmoid(result['logits'].detach())).item()
+        print(torch.max(sigmoid(result['logits'].detach())))
+        return torch.argmax(result['logits'].detach()).item()
 
     def prediction(self, url):
         """
@@ -84,13 +84,9 @@ class Danger():
                  'irony'     : self.__classification(url, task='irony'),
                  'sarcasm'   : self.__classification(url, task='sarcasm')
               }
-        res['overall'] = np.median([ round(x,3) for x in res.values()])
+        #print(res)
+        #res['overall'] = np.median([ round(x,3) for x in res.values()])
 
         return res
 
-
-if __name__ == '__main__':
-
-
-    danger = Danger('dbmdz/bert-base-italian-cased', 2)
 

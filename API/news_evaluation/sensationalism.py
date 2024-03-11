@@ -31,7 +31,7 @@ class Sensationalism:
 
 
         return {'overall': numpy.max([ratio_upper_case['overall'],ratio_repeated_letters['overall'],punct_count['overall'],check_emoji['overall']], ),
-                'ratio_upper_case': ratio_upper_case,
+                'ratio_upper_case': ratio_upper_case,#
                 'ratio_vowel_repetition': ratio_repeated_letters,
                 'punct_count': punct_count,
                 'check_emoji': check_emoji,
@@ -124,26 +124,6 @@ class Sensationalism:
                            'description': 'ratio of emojis in the text and tokens'
                            }
         return check_emoji
-
-
-    ############
-    # sentiment and affective analysis
-    ############
-    def get_affective_analysis(self, url) -> Dict[str, Union[str, float]]:
-
-        sentiment_profile = self.sentiment_analysis.sentiment_by_sent(url.title)
-        emotion_profile = self.emotion_analysis.emotions_by_sent(url.title)
-        sentiment_profile['overall']=abs(sentiment_profile['polarity'])
-        emotion_profile['overall']=np.average([value for value in emotion_profile.values()])
-
-        return {
-            'overall' : np.median([  round(sentiment_profile['overall'],3),  round(emotion_profile['overall'],3)]),
-            'sentiment_profile' : sentiment_profile,
-            'emotion_profile' : emotion_profile,
-            'description' : "the max value between emotion and sentiment profiles"
-        }
-
-
     ############
     # readability, complexity, and grade level
     ############
@@ -171,6 +151,8 @@ class Sensationalism:
             #'gunning_fog' : gunning_fog,
 
         }
+
+
 
     ############
     # colloquial style
@@ -252,6 +234,25 @@ class Sensationalism:
             'interrogative_score': interrogative_score,
             'description': 'median value among clickbait features'
         }
+
+    ############
+    # sentiment and affective analysis
+    ############
+    def get_affective_analysis(self, url) -> Dict[str, Union[str, float]]:
+
+        sentiment_profile = self.sentiment_analysis.sentiment_by_sent(url.title)
+        emotion_profile = self.emotion_analysis.emotions_by_sent(url.title)
+        sentiment_profile['overall']=abs(sentiment_profile['polarity'])
+        emotion_profile['overall']=np.average([value for value in emotion_profile.values()])
+
+        return {
+            'overall' : np.median([  round(sentiment_profile['overall'],3),  round(emotion_profile['overall'],3)]),
+            'sentiment_profile' : sentiment_profile,
+            'emotion_profile' : emotion_profile,
+            'description' : "the max value between emotion and sentiment profiles"
+        }
+
+
 
 
 if __name__ == '__main__':
