@@ -85,7 +85,7 @@ class Danger():
                  'sarcasm'   : self.__classification(url, task='sarcasm')
               }
         #print(res)
-        #res['overall'] = np.median([ round(x,3) for x in res.values()])
+        res['overall'] = np.median([ round(x,3) for x in res.values()])
 
         return res
 
